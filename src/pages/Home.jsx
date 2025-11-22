@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 const HeaderPastel = ({ currentPath }) => (
     <div className="bg-gray-200 py-4 px-6 md:px-12 rounded-t-lg">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-            
+            <img src="logo.jpg" alt="Logo" />
             {/* Logo et Nom de l'Université (Utilisation de flex-grow pour l'alignement) */}
             <div className="flex items-center space-x-4 flex-grow">
                 <div className="w-12 h-12 bg-white rounded-full border border-gray-300">
