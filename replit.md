@@ -118,9 +118,12 @@ src/
 - **Primary**: Blue (#1e40af) → Purple (#7c3aed)
 - **Secondary**: Pink (#ec4899)
 - **Accent**: Orange (#f59e0b)
-- **Background**: Professional dark blue gradient (dark navy #0f172a → bright blue #3b82f6)
+- **Background**: Professional abstract tech-themed image with dark overlay
+  - Image: Modern abstract pattern with purple and blue tech elements
+  - Overlay: Semi-transparent gradient for text readability
+  - Effect: Fixed background that stays in place during scrolling
 - **Card Effects**: Glassmorphism with semi-transparent white backgrounds
-- **Overlays**: Subtle radial gradients for depth
+- **Overlays**: Dark gradient overlay on background for better contrast
 
 ### Typography
 - Font Family: Segoe UI, Tahoma, Geneva, Verdana
@@ -143,11 +146,15 @@ src/
 ## Recent Changes - Sprint 2 Enhancements ✨
 
 ### Premium Design Upgrade
-1. Professional dark blue gradient background (entire app)
-2. Glassmorphism effects on all major containers
-3. Enhanced CSS with fixed background gradients, radial overlays
+1. ✨ **Professional Background Image** - Abstract tech-themed design (NEW!)
+   - Beautiful purple and blue abstract pattern
+   - Fixed background that stays in place during scroll
+   - Semi-transparent dark overlay for text readability
+   - Gives real website aesthetic
+2. Glassmorphism effects on all major containers with perfect contrast
+3. Enhanced CSS with fixed background image and overlay system
 4. Redesigned Home page with premium hero section and feature cards
-5. All pages use professional glassmorphism aesthetic
+5. All pages use professional glassmorphism aesthetic with new background
 
 ### Advanced Features Added (Sprint 2) 🚀
 1. **Course Detail Modal** - Click any course to view full details in a beautiful modal
