@@ -1,7 +1,7 @@
 # Timetable Scheduler - Replit Project
 
 ## Overview
-**Unischeduler** - Une plateforme complète de gestion des emplois du temps pour l'Université de Yaoundé II. Application web moderne permettant aux étudiants de consulter les emplois du temps sans inscription et aux administrateurs de gérer les plannings.
+**Unischeduler** - Une plateforme complète de gestion des emplois du temps pour l'Université de Yaoundé I. Application web moderne permettant aux étudiants de consulter les emplois du temps sans inscription et aux administrateurs de gérer les plannings.
 
 ## Current State - Sprint 1 Complete ✅
 

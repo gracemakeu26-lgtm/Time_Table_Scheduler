@@ -28,7 +28,7 @@ const Header = () => {
               <span className='text-sm font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>UY</span>
             </div>
             <div className='text-lg font-extrabold text-white drop-shadow'>
-              UNIVERSITÉ DE YAOUNDÉ II
+              UNIVERSITÉ DE YAOUNDÉ I
             </div>
           </div>
 
