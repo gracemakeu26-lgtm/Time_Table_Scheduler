@@ -1,31 +1,41 @@
-import React from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 const Header = () => {
-  const location = useLocation()
+  const location = useLocation();
 
   // Sur la page d'accueil, on ne montre pas le header
   if (location.pathname === '/') {
-    return null
+    return null;
   }
 
   const navigation = [
-    { name: 'Emploi du temps', href: '/student', current: location.pathname === '/student' },
-    { name: 'Administration', href: '/login', current: location.pathname === '/login' },
-  ]
+    {
+      name: 'Emploi du temp',
+      href: '/student',
+      current: location.pathname === '/student',
+    },
+    {
+      name: 'Administration',
+      href: '/login',
+      current: location.pathname === '/login',
+    },
+  ];
 
   return (
-    <header className="bg-white border-b border-gray-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <img src="logo.jpg" alt="Logo" />
-        <div className="flex justify-between items-center h-16">
+    <header className='bg-white border-b border-gray-200'>
+      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+        <img src='logo.jpg' alt='Logo' />
+        <div className='flex justify-between items-center h-16'>
           {/* Logo à gauche */}
-          <div className="flex items-center">
-            <div className="text-xl font-bold text-gray-900">UNIVERSITÉ DE YAOUNDÉ I</div>
+          <div className='flex items-center'>
+            <div className='text-xl font-bold text-gray-900'>
+              UNIVERSITÉ DE YAOUNDÉ II
+            </div>
           </div>
 
           {/* Navigation à droite - seulement 2 liens */}
-          <nav className="flex space-x-8">
+          <nav className='flex space-x-8'>
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -43,7 +53,7 @@ const Header = () => {
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;
