@@ -68,8 +68,8 @@ const StudentPortal = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 sm:p-8 flex flex-col items-center'>
-      <div className='max-w-5xl w-full mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden'>
+    <div className='min-h-screen relative flex flex-col items-center justify-start p-4 sm:p-8'>
+      <div className='max-w-5xl w-full mx-auto glass-effect rounded-3xl overflow-hidden shadow-2xl'>
         <Header />
 
         <div className='px-6 py-12 bg-gradient-to-b from-blue-50 to-white'>

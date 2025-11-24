@@ -45,12 +45,12 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 sm:p-8 flex flex-col items-center'>
-      <div className='max-w-5xl w-full mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden'>
+    <div className='min-h-screen relative flex flex-col items-center justify-start p-4 sm:p-8'>
+      <div className='max-w-5xl w-full mx-auto glass-effect rounded-3xl overflow-hidden shadow-2xl'>
         <Header />
 
-        <main className='py-12 px-6 flex justify-center grow bg-gradient-to-b from-gray-50 to-white'>
-          <div className='p-8 rounded-2xl shadow-lg max-w-sm w-full bg-white border-2 border-purple-100'>
+        <main className='py-20 px-6 flex justify-center grow bg-gradient-to-b from-blue-50 to-white'>
+          <div className='p-8 rounded-2xl shadow-lg max-w-sm w-full glass-effect border border-blue-100'>
             <div className='gradient-primary text-white rounded-lg p-4 mb-6 text-center'>
               <h2 className='text-2xl font-bold'>Accès Administration</h2>
               <p className='text-purple-100 text-sm mt-1'>Authentification Sécurisée</p>

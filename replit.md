@@ -118,7 +118,9 @@ src/
 - **Primary**: Blue (#1e40af) → Purple (#7c3aed)
 - **Secondary**: Pink (#ec4899)
 - **Accent**: Orange (#f59e0b)
-- **Backgrounds**: Soft gradients (blue/purple/pink tones)
+- **Background**: Professional dark blue gradient (dark navy #0f172a → bright blue #3b82f6)
+- **Card Effects**: Glassmorphism with semi-transparent white backgrounds
+- **Overlays**: Subtle radial gradients for depth
 
 ### Typography
 - Font Family: Segoe UI, Tahoma, Geneva, Verdana
@@ -126,24 +128,33 @@ src/
 - Text: Clear hierarchy, accessible
 
 ### Components
-- Cards with hover effects and shadows
+- Premium glassmorphism cards with backdrop blur
+- Dark gradient background with fixed attachment
+- Radial gradient overlays for visual interest
+- Animated blur effects in hero sections
+- Cards with hover effects and smooth transitions
 - Gradients on headers and footers
-- Rounded borders (xl, lg)
+- Rounded borders (xl, lg, 3xl)
 - Smooth transitions (0.3s)
-- Progress indicators
-- Course type legend
+- Progress indicators with gradient fills
+- Course type legend with color coding
+- Professional shadows and depth layers
 
-## Recent Changes
-1. Created Loading page with progress animation
-2. Added real timetable data (timetableData.js)
-3. Enhanced TimetableView with:
-   - Week selector dropdown
-   - Course information display
-   - Color-coded course types
-   - Legend for course types
-4. Improved responsive design across all pages
-5. Removed all emojis for professional appearance
-6. Added Loading route to App.jsx
+## Recent Changes - Premium Design Upgrade ✨
+1. Professional dark blue gradient background (entire app)
+2. Glassmorphism effects on all major containers
+3. Enhanced CSS with:
+   - Fixed background gradient with depth layers
+   - Radial gradient overlays for visual interest
+   - Glass-effect cards with backdrop blur
+   - Smooth transitions and hover effects
+4. Redesigned Home page with:
+   - Premium hero section with animated blur effects
+   - Numbered feature cards (1, 2, 3) with gradient borders
+   - Enhanced hover states with overlay effects
+5. Updated StudentPortal with glass-effect styling
+6. Premium Login page design
+7. All pages now use professional glassmorphism aesthetic
 
 ## Next Steps (Sprint 2)
 - Admin login system with authentication
