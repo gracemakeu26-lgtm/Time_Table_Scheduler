@@ -45,15 +45,16 @@ const Login = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100 p-4 sm:p-8 flex flex-col items-center'>
-      <div className='max-w-5xl w-full mx-auto bg-white shadow-xl rounded-lg overflow-hidden'>
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 sm:p-8 flex flex-col items-center'>
+      <div className='max-w-5xl w-full mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden'>
         <Header />
 
-        <main className='py-16 px-6 flex justify-center grow'>
-          <div className='p-10 border border-gray-300 rounded-lg shadow-md max-w-sm w-full bg-gray-50'>
-            <h2 className='text-xl font-bold text-gray-800 mb-6 text-center'>
-              Accès administration
-            </h2>
+        <main className='py-12 px-6 flex justify-center grow bg-gradient-to-b from-gray-50 to-white'>
+          <div className='p-8 rounded-2xl shadow-lg max-w-sm w-full bg-white border-2 border-purple-100'>
+            <div className='gradient-primary text-white rounded-lg p-4 mb-6 text-center'>
+              <h2 className='text-2xl font-bold'>🔐 Accès Administration</h2>
+              <p className='text-purple-100 text-sm mt-1'>Authentification Sécurisée</p>
+            </div>
 
             <form onSubmit={handleSubmit}>
               <Input
@@ -85,20 +86,26 @@ const Login = () => {
                   type='submit'
                   variant='primary'
                   disabled={isSubmitting}
-                  className='w-full'
+                  className='w-full font-bold'
                 >
-                  {isSubmitting ? 'Connexion...' : 'Se connecter'}
+                  {isSubmitting ? '⏳ Connexion...' : '✅ Se connecter'}
                 </Button>
 
                 <Link
                   to='/'
-                  className='text-sm text-gray-500 hover:text-blue-600 transition-colors flex items-center'
+                  className='text-sm text-purple-600 hover:text-purple-800 transition-colors flex items-center font-semibold'
                 >
                   <BackIcon className='h-4 w-4 mr-1' />
                   Retour à l'accueil
                 </Link>
               </div>
             </form>
+            
+            <div className='mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded'>
+              <p className='text-xs text-gray-700'>
+                <span className='font-bold'>Accès démo:</span> Utilisez n'importe quels identifiants pour vous connecter
+              </p>
+            </div>
           </div>
         </main>
 

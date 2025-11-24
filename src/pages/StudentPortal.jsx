@@ -68,17 +68,35 @@ const StudentPortal = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100 p-4 sm:p-8 flex flex-col items-center'>
-      <div className='max-w-5xl w-full mx-auto bg-white shadow-xl rounded-lg overflow-hidden'>
+    <div className='min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 p-4 sm:p-8 flex flex-col items-center'>
+      <div className='max-w-5xl w-full mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden'>
         <Header />
 
-        <div className='px-6 py-12'>
+        <div className='px-6 py-12 bg-gradient-to-b from-blue-50 to-white'>
+          {/* Progress Indicator */}
+          <div className='flex justify-center items-center gap-2 mb-8'>
+            {[1, 2, 3, 4].map((step) => (
+              <div key={step} className='flex items-center'>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                  step <= currentStep
+                    ? 'bg-gradient-to-br from-blue-500 to-purple-500 text-white'
+                    : 'bg-gray-200 text-gray-500'
+                }`}>
+                  {step}
+                </div>
+                {step < 4 && <div className={`w-8 h-1 mx-1 ${
+                  step < currentStep ? 'bg-gradient-to-r from-blue-500 to-purple-500' : 'bg-gray-200'
+                }`}></div>}
+              </div>
+            ))}
+          </div>
+
           {/* Step Title and Description */}
           <div className='mb-8 text-center'>
-            <h2 className='text-3xl font-bold text-gray-900 mb-2'>
+            <h2 className='text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2'>
               {STUDENT_PORTAL_STEPS[currentStep - 1].name}
             </h2>
-            <p className='text-lg text-gray-600'>{getStepDescription()}</p>
+            <p className='text-lg text-gray-700 font-medium'>{getStepDescription()}</p>
           </div>
 
           {/* Back Button */}

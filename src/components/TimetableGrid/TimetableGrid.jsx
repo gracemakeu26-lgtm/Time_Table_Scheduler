@@ -11,30 +11,30 @@ const TimetableGrid = ({ schedule = [] }) => {
   const getCourseStyle = (type) => {
     switch (type) {
       case COURSE_TYPES.LECTURE:
-        return 'bg-blue-100 border-blue-300';
+        return 'bg-gradient-to-br from-blue-100 to-blue-200 border-2 border-blue-400 shadow-md';
       case COURSE_TYPES.LAB:
-        return 'bg-green-100 border-green-300';
+        return 'bg-gradient-to-br from-green-100 to-green-200 border-2 border-green-400 shadow-md';
       case COURSE_TYPES.TUTORIAL:
-        return 'bg-purple-100 border-purple-300';
+        return 'bg-gradient-to-br from-purple-100 to-purple-200 border-2 border-purple-400 shadow-md';
       default:
-        return 'bg-gray-100 border-gray-300';
+        return 'bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-gray-300 shadow-md';
     }
   };
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-auto rounded-lg shadow-lg'>
       <div className='min-w-[800px]'>
         <table className='w-full border-collapse'>
           {/* Header */}
           <thead>
             <tr>
-              <th className='bg-blue-800 text-white p-3 text-center font-bold border border-gray-300'></th>
+              <th className='gradient-primary text-white p-4 text-center font-bold border-2 border-gray-300'></th>
               {DAYS_OF_WEEK.map((day) => (
                 <th
                   key={day}
-                  className='bg-blue-600 text-white p-3 text-center font-bold border border-gray-300'
+                  className='bg-gradient-to-br from-blue-600 to-purple-600 text-white p-4 text-center font-bold border-2 border-gray-300'
                 >
-                  {day}
+                  <div className='font-extrabold text-sm'>{day}</div>
                 </th>
               ))}
             </tr>
@@ -44,8 +44,8 @@ const TimetableGrid = ({ schedule = [] }) => {
           <tbody>
             {TIME_SLOTS.map((timeSlot) => (
               <tr key={timeSlot}>
-                <td className='bg-gray-100 p-3 text-center font-medium border border-gray-300 whitespace-nowrap'>
-                  {timeSlot}
+                <td className='bg-gradient-to-r from-gray-200 to-gray-100 p-4 text-center font-bold border-2 border-gray-300 whitespace-nowrap text-gray-800'>
+                  ⏰ {timeSlot}
                 </td>
                 {DAYS_OF_WEEK.map((day) => {
                   const course = getCourseForSlot(day, timeSlot);

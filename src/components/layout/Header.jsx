@@ -19,13 +19,15 @@ const Header = () => {
   });
 
   return (
-    <header className='bg-white border-b border-gray-200'>
+    <header className='gradient-primary shadow-lg'>
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        <img src='logo.jpg' alt='Logo' />
         <div className='flex justify-between items-center h-16'>
           {/* Logo à gauche */}
-          <div className='flex items-center'>
-            <div className='text-xl font-bold text-gray-900'>
+          <div className='flex items-center gap-3'>
+            <div className='w-10 h-10 bg-white rounded-lg flex items-center justify-center'>
+              <span className='text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent'>🎓</span>
+            </div>
+            <div className='text-lg font-extrabold text-white drop-shadow'>
               UNIVERSITÉ DE YAOUNDÉ II
             </div>
           </div>
@@ -33,16 +35,16 @@ const Header = () => {
           {/* Navigation */}
           <nav
             aria-label='Navigation principale'
-            className='flex text-gray-700 font-medium ml-auto space-x-10'
+            className='flex text-white font-semibold ml-auto space-x-8'
           >
             {visibleLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`hover:text-blue-600 transition-colors ${
+                className={`transition-all duration-300 pb-1 border-b-2 ${
                   location.pathname === link.to
-                    ? 'text-blue-600 font-semibold'
-                    : ''
+                    ? 'border-white text-white'
+                    : 'border-transparent text-blue-100 hover:text-white'
                 }`}
               >
                 {link.label}
