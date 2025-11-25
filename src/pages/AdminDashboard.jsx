@@ -11,6 +11,15 @@ const AdminDashboard = () => {
   ]);
   const [showAddForm, setShowAddForm] = useState(false);
   const [newTimetable, setNewTimetable] = useState({ name: '', faculty: '', courses: '' });
+  const [faculties, setFaculties] = useState([
+    { id: 1, name: 'Sciences', departments: 4, programs: 8 },
+    { id: 2, name: 'Engineering', departments: 5, programs: 10 },
+    { id: 3, name: 'Business', departments: 3, programs: 6 },
+    { id: 4, name: 'Letters & Human Sciences', departments: 6, programs: 12 },
+    { id: 5, name: 'Education', departments: 4, programs: 8 },
+  ]);
+  const [showAddFacultyForm, setShowAddFacultyForm] = useState(false);
+  const [newFaculty, setNewFaculty] = useState({ name: '', departments: '', programs: '' });
 
   const handleAddTimetable = () => {
     if (newTimetable.name && newTimetable.faculty) {
@@ -25,6 +34,26 @@ const AdminDashboard = () => {
 
   const handleDeleteTimetable = (id) => {
     setTimetables(timetables.filter(t => t.id !== id));
+  };
+
+  const handleAddFaculty = () => {
+    if (newFaculty.name && newFaculty.departments) {
+      setFaculties([
+        ...faculties,
+        { 
+          id: Date.now(), 
+          name: newFaculty.name, 
+          departments: parseInt(newFaculty.departments) || 0,
+          programs: parseInt(newFaculty.programs) || 0
+        }
+      ]);
+      setNewFaculty({ name: '', departments: '', programs: '' });
+      setShowAddFacultyForm(false);
+    }
+  };
+
+  const handleDeleteFaculty = (id) => {
+    setFaculties(faculties.filter(f => f.id !== id));
   };
 
   return (
@@ -229,9 +258,82 @@ const AdminDashboard = () => {
           {/* Faculty Tab */}
           {activeTab === 'faculty' && (
             <div>
-              <h2 className='text-xl font-bold text-gray-900 mb-6'>Facultés & Départements</h2>
-              <div className='bg-white rounded-md border border-gray-200 p-6'>
-                <p className='text-gray-600 text-sm'>Fonctionnalité en développement</p>
+              <div className='flex justify-between items-center mb-6'>
+                <h2 className='text-xl font-bold text-gray-900'>Facultés & Départements</h2>
+                <button 
+                  onClick={() => setShowAddFacultyForm(!showAddFacultyForm)}
+                  className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                >
+                  {showAddFacultyForm ? 'Annuler' : 'Ajouter une faculté'}
+                </button>
+              </div>
+
+              {/* Add Faculty Form */}
+              {showAddFacultyForm && (
+                <div className='bg-white rounded-md border border-gray-200 p-6 mb-6'>
+                  <h3 className='text-base font-semibold text-gray-900 mb-4'>Nouvelle faculté</h3>
+                  <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                    <input
+                      type='text'
+                      placeholder='Nom de la faculté'
+                      value={newFaculty.name}
+                      onChange={(e) => setNewFaculty({...newFaculty, name: e.target.value})}
+                      className='px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600'
+                    />
+                    <input
+                      type='number'
+                      placeholder='Nombre de départements'
+                      value={newFaculty.departments}
+                      onChange={(e) => setNewFaculty({...newFaculty, departments: e.target.value})}
+                      className='px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600'
+                    />
+                    <input
+                      type='number'
+                      placeholder='Nombre de programmes'
+                      value={newFaculty.programs}
+                      onChange={(e) => setNewFaculty({...newFaculty, programs: e.target.value})}
+                      className='px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600'
+                    />
+                  </div>
+                  <button 
+                    onClick={handleAddFaculty}
+                    className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              )}
+
+              {/* Faculties Table */}
+              <div className='bg-white rounded-md border border-gray-200 overflow-hidden'>
+                <table className='w-full'>
+                  <thead className='bg-gray-50 border-b'>
+                    <tr>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Nom</th>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Départements</th>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Programmes</th>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className='divide-y'>
+                    {faculties.map((item) => (
+                      <tr key={item.id} className='hover:bg-gray-50'>
+                        <td className='px-6 py-4 text-sm text-gray-900 font-medium'>{item.name}</td>
+                        <td className='px-6 py-4 text-sm text-gray-600'>{item.departments}</td>
+                        <td className='px-6 py-4 text-sm text-gray-600'>{item.programs}</td>
+                        <td className='px-6 py-4 text-sm space-x-4'>
+                          <button className='text-blue-600 hover:text-blue-700 text-sm font-medium'>Éditer</button>
+                          <button 
+                            onClick={() => handleDeleteFaculty(item.id)}
+                            className='text-red-600 hover:text-red-700 text-sm font-medium'
+                          >
+                            Supprimer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
           )}
