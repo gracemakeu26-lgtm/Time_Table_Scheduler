@@ -20,7 +20,7 @@ const Header = () => {
 
   return (
     <header className='bg-white shadow-sm border-b border-gray-200'>
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+      <div className='w-full px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center h-16'>
           {/* Logo à gauche */}
           <div className='flex items-center gap-2'>
@@ -33,12 +33,12 @@ const Header = () => {
           </div>
 
           {/* Navigation */}
-          <nav className='flex text-gray-700 font-medium ml-auto space-x-16'>
+          <nav className='flex text-gray-700 font-medium ml-auto gap-20 pr-4'>
             {visibleLinks.map((link) => (
               <Link
                 key={link.to}
                 to={link.to}
-                className={`transition-colors duration-200 text-sm ${
+                className={`transition-colors duration-200 text-sm whitespace-nowrap ${
                   location.pathname === link.to
                     ? 'text-blue-600 font-semibold'
                     : 'text-gray-600 hover:text-blue-600'
