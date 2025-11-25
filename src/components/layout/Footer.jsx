@@ -47,12 +47,9 @@ const Footer = () => {
                   <span className='text-gray-600'>{UNIVERSITY_INFO.address}</span>
                 </li>
               </ul>
-              {/* Social Links */}
+              {/* Social Links - LinkedIn Only */}
               <div className='flex gap-4 mt-6'>
-                <a href='#' className='text-gray-400 hover:text-blue-600 transition text-lg'>f</a>
-                <a href='#' className='text-gray-400 hover:text-blue-600 transition text-lg'>𝕏</a>
-                <a href='#' className='text-gray-400 hover:text-blue-600 transition text-lg'>📷</a>
-                <a href='#' className='text-gray-400 hover:text-blue-600 transition text-lg'>in</a>
+                <a href='https://cm.linkedin.com/company/uy1' target='_blank' rel='noopener noreferrer' className='text-gray-400 hover:text-blue-600 transition text-lg' title='LinkedIn'>in</a>
               </div>
             </div>
           </div>
