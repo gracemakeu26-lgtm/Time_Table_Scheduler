@@ -55,13 +55,13 @@ const StudentPortal = () => {
   const getStepDescription = () => {
     switch (currentStep) {
       case 1:
-        return 'Sélectionnez une faculté pour continuer.';
+        return 'Select a faculty to continue.';
       case 2:
-        return `Départements de la faculté ${selectedFaculty?.name || ''}.`;
+        return `Departments of the faculty ${selectedFaculty?.name || ''}.`;
       case 3:
-        return `Programmes du département ${selectedDepartment?.name || ''}.`;
+        return `Programs of the department ${selectedDepartment?.name || ''}.`;
       case 4:
-        return `Emploi du temps pour ${selectedProgram}.`;
+        return `Timetable for ${selectedProgram}.`;
       default:
         return '';
     }

@@ -2,115 +2,115 @@ export const facultiesData = {
   faculties: [
     {
       id: 1,
-      name: "Faculté des Arts",
+      name: "Faculty of Arts",
       code: "ARTS",
-      description: "Histoire de l'Art, Arts Plastiques et Arts du Spectacle",
+      description: "Art History, Visual Arts et Performing Arts",
       departments: [
         { 
           id: 101, 
-          name: "Histoire de l'Art", 
-          programs: ["Licence Histoire de l'Art", "Master Muséologie", "Doctorat Arts et Archéologie"] 
+          name: "Art History", 
+          programs: ["Licence Art History", "Master of Museology", "Doctorate in Arts and Archaeology"] 
         },
         { 
           id: 102, 
-          name: "Arts Plastiques", 
-          programs: ["Licence Arts Plastiques", "Master Design", "Master Peinture et Sculpture"] 
+          name: "Visual Arts", 
+          programs: ["Licence Visual Arts", "Master of Design", "Master of Painting and Sculpture"] 
         },
         { 
           id: 103, 
-          name: "Arts du Spectacle", 
-          programs: ["Licence Théâtre", "Licence Cinéma", "Licence Musique", "Master Mise en Scène"] 
+          name: "Performing Arts", 
+          programs: ["Bachelor of Theater", "Bachelor of Cinema", "Bachelor of Music", "Master of Directing"] 
         }
       ]
     },
     {
       id: 2,
-      name: "Faculté des Lettres et Sciences Humaines",
+      name: "Faculty of Letters and Human Sciences",
       code: "FALSH", 
-      description: "Langues, Littérature, Psychologie et Sciences Sociales",
+      description: "Langues, Littérature, Psychology et Social Sciences",
       departments: [
         { 
           id: 201, 
           name: "Anglais", 
-          programs: ["Licence Anglais", "Master Traduction", "Master Linguistique Anglaise"] 
+          programs: ["Licence Anglais", "Master of Translation", "Master of English Linguistics"] 
         },
         { 
           id: 202, 
           name: "Français", 
-          programs: ["Licence Français", "Master Littérature Française", "Master Linguistique"] 
+          programs: ["Licence Français", "Master of French Literature", "Master of Linguistics"] 
         },
         { 
           id: 203, 
-          name: "Psychologie", 
-          programs: ["Licence Psychologie", "Master Psychologie Clinique", "Master Neuropsychologie"] 
+          name: "Psychology", 
+          programs: ["Licence Psychology", "Master Psychology Clinique", "Master of Neuropsychology"] 
         },
         { 
           id: 204, 
-          name: "Sciences Sociales", 
-          programs: ["Licence Sociologie", "Master Anthropologie", "Master Recherche Sociale"] 
+          name: "Social Sciences", 
+          programs: ["Bachelor of Sociology", "Master of Anthropology", "Master of Social Research"] 
         }
       ]
     },
     {
       id: 3,
-      name: "Faculté des Sciences",
+      name: "Faculty of Sciences",
       code: "FS",
-      description: "Biosciences, Chimie, Informatique, Mathématiques et Physique",
+      description: "Biosciences, Chemistry, Computer Science, Mathematics et Physics",
       departments: [
         { 
           id: 301, 
-          name: "Informatique", 
-          programs: ["Licence Informatique", "Master Intelligence Artificielle", "Master Réseaux et Sécurité"] 
+          name: "Computer Science", 
+          programs: ["Licence Computer Science", "Master of Artificial Intelligence", "Master of Networks and Security"] 
         },
         { 
           id: 302, 
-          name: "Mathématiques", 
-          programs: ["Licence Mathématiques", "Master Statistiques", "Master Mathématiques Appliquées"] 
+          name: "Mathematics", 
+          programs: ["Licence Mathematics", "Master of Statistics", "Master Mathematics Appliquées"] 
         },
         { 
           id: 303, 
-          name: "Physique", 
-          programs: ["Licence Physique", "Master Astrophysique", "Master Physique Quantique"] 
+          name: "Physics", 
+          programs: ["Licence Physics", "Master of Astrophysics", "Master Physics Quantique"] 
         },
         { 
           id: 304, 
-          name: "Chimie", 
-          programs: ["Licence Chimie", "Master Biochimie", "Master Chimie Analytique"] 
+          name: "Chemistry", 
+          programs: ["Licence Chemistry", "Master of Biochemistry", "Master Chemistry Analytique"] 
         },
         { 
           id: 305, 
           name: "Biosciences", 
-          programs: ["Licence Biologie", "Master Génétique", "Master Biologie Moléculaire"] 
+          programs: ["Bachelor of Biology", "Master of Genetics", "Master of Molecular Biology"] 
         }
       ]
     },
     {
       id: 4,
-      name: "Faculté des Sciences de l'Éducation", 
+      name: "Faculty of Education Sciences", 
       code: "FSE",
-      description: "Sociologie, Psychologie et Technologies de l'Éducation",
+      description: "Sociologie, Psychology et Technologys de l'Éducation",
       departments: [
         { 
           id: 401, 
-          name: "Sciences de l'Éducation", 
-          programs: ["Licence Sciences de l'Éducation", "Master Pédagogie", "Doctorat en Éducation"] 
+          name: "Education Sciences", 
+          programs: ["Licence Education Sciences", "Master of Pedagogy", "Doctorate in Education"] 
         },
         { 
           id: 402, 
-          name: "TIC et Éducation", 
-          programs: ["Licence TIC", "Master e-Learning", "Master Technologies Éducatives"] 
+          name: "ICT and Education", 
+          programs: ["Bachelor of ICT", "Master of e-Learning", "Master Technologys Éducatives"] 
         }
       ]
     },
     {
       id: 5,
-      name: "Faculté de Médecine et des Sciences Biomédicales",
+      name: "Faculty of Medicine and Biomedical Sciences",
       code: "FMSB",
       description: "Médecine, Recherche Biomédicale et Santé Publique",
       departments: [
         { 
           id: 501, 
-          name: "Médecine Générale", 
+          name: "General Medicine", 
           programs: ["Doctorat en Médecine", "Spécialisation Chirurgie", "Spécialisation Pédiatrie"] 
         },
         { 

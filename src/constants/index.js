@@ -1,17 +1,17 @@
 // Navigation configuration
 export const NAV_LINKS = [
-  { to: '/', label: 'Accueil', showOn: ['all'] },
-  { to: '/student', label: 'Emploi du temps', showOn: ['all'], hideOn: [] },
+  { to: '/', label: 'Home', showOn: ['all'] },
+  { to: '/student', label: 'Timetable', showOn: ['all'], hideOn: [] },
   {
     to: '/login',
-    label: 'Connexion Admin',
+    label: 'Admin Login',
     showOn: ['all'],
     hideOn: ['/login'],
   },
 ];
 
 // Days of the week
-export const DAYS_OF_WEEK = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi'];
+export const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 
 // Time slots for timetable
 export const TIME_SLOTS = [
@@ -23,22 +23,22 @@ export const TIME_SLOTS = [
 
 // Weeks configuration
 export const WEEKS = [
-  { id: '1', name: 'Semaine 1' },
-  { id: '2', name: 'Semaine 2' },
-  { id: '3', name: 'Semaine 3' },
-  { id: '4', name: 'Semaine 4' },
+  { id: '1', name: 'Week 1' },
+  { id: '2', name: 'Week 2' },
+  { id: '3', name: 'Week 3' },
+  { id: '4', name: 'Week 4' },
 ];
 
 // Course types
 export const COURSE_TYPES = {
-  LECTURE: 'Cours Magistral',
-  LAB: 'Travaux Pratiques',
-  TUTORIAL: 'Travaux Dirigés',
+  LECTURE: 'Lecture',
+  LAB: 'Lab Work',
+  TUTORIAL: 'Tutorial',
 };
 
 // University information
 export const UNIVERSITY_INFO = {
-  name: 'Université de Yaoundé I',
+  name: 'University of Yaoundé I',
   shortName: 'UY1',
   phone: '(+237) 222 22 13 20',
   email: 'rectorat@univ-yaounde1.cm',
@@ -50,17 +50,17 @@ export const UNIVERSITY_INFO = {
 
 // Application metadata
 export const APP_INFO = {
-  name: 'Unischeduler',
-  tagline: 'Une consultation simplifiée des horaires',
+  name: 'UniScheduler',
+  tagline: 'Simplified timetable consultation',
   description:
-    'Unischeduler est une plateforme permettant aux étudiants, enseignants et parents de consulter les emplois du temps',
+    'UniScheduler is a platform that allows students, teachers and parents to view timetables',
   year: new Date().getFullYear(),
 };
 
 // Step navigation for StudentPortal
 export const STUDENT_PORTAL_STEPS = [
-  { id: 1, name: 'Facultés', icon: 'faculty' },
-  { id: 2, name: 'Départements', icon: 'department' },
-  { id: 3, name: 'Programmes', icon: 'program' },
-  { id: 4, name: 'Emploi du temps', icon: 'timetable' },
+  { id: 1, name: 'Faculties', icon: 'faculty' },
+  { id: 2, name: 'Departments', icon: 'department' },
+  { id: 3, name: 'Programs', icon: 'program' },
+  { id: 4, name: 'Timetable', icon: 'timetable' },
 ];

@@ -13,17 +13,17 @@ const NotFound = () => {
         <main className='py-16 px-6 text-center grow flex flex-col items-center justify-center min-h-[500px]'>
           <div className='text-9xl font-bold text-gray-300 mb-4'>404</div>
           <h1 className='text-4xl font-bold text-gray-900 mb-4'>
-            Page non trouvée
+            Page Not Found
           </h1>
           <p className='text-lg text-gray-600 mb-8 max-w-md'>
-            Désolé, la page que vous recherchez n'existe pas ou a été déplacée.
+            Sorry, the page you are looking for does not exist or has been moved.
           </p>
           <div className='flex gap-4'>
             <Button to='/' size='lg'>
-              Retour à l'accueil
+              Back to Home
             </Button>
             <Button to='/student' size='lg' variant='secondary'>
-              Voir les emplois du temps
+              View Timetables
             </Button>
           </div>
         </main>

@@ -10,29 +10,29 @@ const Footer = () => {
           <div className='grid grid-cols-1 md:grid-cols-3 gap-16 mb-12'>
             {/* About Section */}
             <div>
-              <h4 className='font-semibold text-gray-900 mb-4 text-sm'>À propos</h4>
-              <p className='text-sm text-gray-600 leading-relaxed'>L'Université de Yaoundé I offre aux étudiants, parents et enseignants un accès facile aux horaires des cours, aux salles de classe et aux informations professionnelles en un seul endroit.</p>
+              <h4 className='font-semibold text-gray-900 mb-4 text-sm'>About</h4>
+              <p className='text-sm text-gray-600 leading-relaxed'>The University of Yaoundé I provides students, parents and teachers easy access to class schedules, classrooms and professional information in one place.</p>
             </div>
 
             {/* Quick Links Section */}
             <div>
-              <h4 className='font-semibold text-gray-900 mb-4 text-sm'>Liens rapides</h4>
+              <h4 className='font-semibold text-gray-900 mb-4 text-sm'>Quick Links</h4>
               <ul className='space-y-3 text-sm'>
                 <li>
-                  <a href='/' className='text-gray-600 hover:text-blue-600 transition duration-200'>Accueil</a>
+                  <a href='/' className='text-gray-600 hover:text-blue-600 transition duration-200'>Home</a>
                 </li>
                 <li>
-                  <a href='/student' className='text-gray-600 hover:text-blue-600 transition duration-200'>Emploi du temps</a>
+                  <a href='/student' className='text-gray-600 hover:text-blue-600 transition duration-200'>Timetable</a>
                 </li>
                 <li>
-                  <a href='/login' className='text-gray-600 hover:text-blue-600 transition duration-200'>Accès Admin</a>
+                  <a href='/login' className='text-gray-600 hover:text-blue-600 transition duration-200'>Admin Access</a>
                 </li>
               </ul>
             </div>
 
             {/* Contact Section */}
             <div>
-              <h4 className='font-semibold text-gray-900 mb-4 text-sm'>Informations de Contact</h4>
+              <h4 className='font-semibold text-gray-900 mb-4 text-sm'>Contact Information</h4>
               <ul className='space-y-3 text-sm'>
                 <li className='flex items-center gap-3'>
                   <span className='text-blue-600'>✉️</span>
@@ -60,7 +60,7 @@ const Footer = () => {
           {/* Bottom Section */}
           <div className='border-t border-gray-200 pt-8'>
             <p className='text-xs text-gray-500 text-center'>
-              &copy; {APP_INFO.year} {UNIVERSITY_INFO.name} - Système de Gestion des Emplois du Temps. Tous droits réservés.
+              &copy; {APP_INFO.year} {UNIVERSITY_INFO.name} - Timetable Management System. All rights reserved.
             </p>
           </div>
         </div>

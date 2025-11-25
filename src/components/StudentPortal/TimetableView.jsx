@@ -47,11 +47,11 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
 
   const getCourseStyle = (type) => {
     switch (type) {
-      case 'Cours Magistral':
+      case 'Lecture':
         return 'bg-blue-50 border-l-4 border-blue-600';
-      case 'Travaux Pratiques':
+      case 'Lab Work':
         return 'bg-emerald-50 border-l-4 border-emerald-600';
-      case 'Travaux Dirigés':
+      case 'Tutorial':
         return 'bg-indigo-50 border-l-4 border-indigo-600';
       default:
         return 'bg-gray-50 border-l-4 border-gray-400';
@@ -63,7 +63,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
   };
 
   const handleDownloadCSV = () => {
-    let csv = 'Jour,Heure,Cours,Enseignant,Salle,Type\n';
+    let csv = 'Day,Time,Course,Teacher,Room,Type\n';
     allCourses.forEach((course) => {
       csv += `${course.day},${course.time},"${course.course}","${course.teacher}",${course.room},"${course.type}"\n`;
     });
@@ -72,7 +72,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `emploi_du_temps_${selectedProgram}_${selectedWeek}.csv`;
+    a.download = `timetable_${selectedProgram}_${selectedWeek}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
   };
@@ -83,7 +83,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
     const element = tableRef.current;
     const opt = {
       margin: 10,
-      filename: `emploi_du_temps_${selectedProgram}_${selectedWeek}.pdf`,
+      filename: `timetable_${selectedProgram}_${selectedWeek}.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' },
@@ -97,7 +97,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
       {/* Search Section */}
       <div className='mb-6'>
         <label className='block text-sm font-semibold text-gray-700 mb-3'>
-          Rechercher un cours
+          Search for a course
         </label>
         <CourseSearch
           courses={allCourses}
@@ -107,7 +107,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
         />
         <input
           type='text'
-          placeholder='Rechercher par cours, enseignant ou salle...'
+          placeholder='Search by course, teacher or room...'
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className='w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors'
@@ -119,22 +119,22 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
         <div className='flex flex-wrap gap-4'>
           <div className='flex-1 min-w-[200px]'>
             <label className='block text-sm font-semibold text-gray-700 mb-2'>
-              Semaine
+              Week
             </label>
             <select
               value={selectedWeek}
               onChange={(e) => setSelectedWeek(e.target.value)}
               className='w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors'
             >
-              <option value='week1'>Semaine 1</option>
-              <option value='week2'>Semaine 2</option>
-              <option value='week3'>Semaine 3</option>
-              <option value='week4'>Semaine 4</option>
+              <option value='week1'>Week 1</option>
+              <option value='week2'>Week 2</option>
+              <option value='week3'>Week 3</option>
+              <option value='week4'>Week 4</option>
             </select>
           </div>
           <div className='flex items-end'>
             <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
-              Programme: <span className='text-blue-600'>{selectedProgram}</span>
+              Program: <span className='text-blue-600'>{selectedProgram}</span>
             </div>
           </div>
         </div>
@@ -144,15 +144,15 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
           <button
             onClick={handlePrint}
             className='flex items-center gap-2 px-4 py-2 bg-white border-2 border-blue-300 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors'
-            title='Imprimer'
+            title='Print'
           >
             <PrintIcon className='w-4 h-4' />
-            <span className='hidden sm:inline'>Imprimer</span>
+            <span className='hidden sm:inline'>Print</span>
           </button>
           <button
             onClick={handleDownloadPDF}
             className='flex items-center gap-2 px-4 py-2 bg-white border-2 border-red-300 text-red-600 font-semibold rounded-lg hover:bg-red-50 transition-colors'
-            title='Télécharger en PDF'
+            title='Download as PDF'
           >
             <DownloadIcon className='w-4 h-4' />
             <span className='hidden sm:inline'>PDF</span>
@@ -160,7 +160,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
           <button
             onClick={handleDownloadCSV}
             className='flex items-center gap-2 px-4 py-2 bg-white border-2 border-green-300 text-green-600 font-semibold rounded-lg hover:bg-green-50 transition-colors'
-            title='Télécharger en CSV'
+            title='Download as Excel'
           >
             <DownloadIcon className='w-4 h-4' />
             <span className='hidden sm:inline'>Excel</span>
@@ -175,7 +175,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
           <thead>
             <tr>
               <th className='gradient-primary text-white p-4 text-center font-bold border-2 border-gray-300 w-24'>
-                Heure
+                Time
               </th>
               {DAYS_OF_WEEK.map((day) => (
                 <th
@@ -220,10 +220,10 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
                             {course.course}
                           </div>
                           <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
-                            <span className='font-semibold'>Ens:</span> {course.teacher.split(' ')[0]}
+                            <span className='font-semibold'>Teacher:</span> {course.teacher.split(' ')[0]}
                           </div>
                           <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
-                            <span className='font-semibold'>Salle:</span> {course.room}
+                            <span className='font-semibold'>Room:</span> {course.room}
                           </div>
                         </div>
                       ) : !course && isFiltered ? (
@@ -244,15 +244,15 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
       <div className='mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
         <div className='flex items-center gap-2 p-3 bg-blue-50 rounded-lg border-l-4 border-blue-600'>
           <div className='w-4 h-4 bg-blue-300 rounded'></div>
-          <span className='text-sm text-gray-700'>Cours Magistral</span>
+          <span className='text-sm text-gray-700'>Lecture</span>
         </div>
         <div className='flex items-center gap-2 p-3 bg-green-50 rounded-lg border-l-4 border-green-600'>
           <div className='w-4 h-4 bg-green-300 rounded'></div>
-          <span className='text-sm text-gray-700'>Travaux Pratiques</span>
+          <span className='text-sm text-gray-700'>Lab Work</span>
         </div>
         <div className='flex items-center gap-2 p-3 bg-purple-50 rounded-lg border-l-4 border-purple-600'>
           <div className='w-4 h-4 bg-purple-300 rounded'></div>
-          <span className='text-sm text-gray-700'>Travaux Dirigés</span>
+          <span className='text-sm text-gray-700'>Tutorial</span>
         </div>
       </div>
 

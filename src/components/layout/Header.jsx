@@ -22,13 +22,13 @@ const Header = () => {
     <header className='bg-white shadow-sm border-b border-gray-200'>
       <div className='w-full px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center h-16'>
-          {/* Logo à gauche */}
+          {/* Logo */}
           <div className='flex items-center gap-2'>
             <div className='text-2xl font-bold text-blue-600'>
               UY1
             </div>
             <div className='text-sm font-semibold text-gray-900'>
-              Emploi du temps
+              Timetable
             </div>
           </div>
 
