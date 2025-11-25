@@ -1,10 +1,31 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [timetables, setTimetables] = useState([
+    { id: 1, name: 'CS L1', faculty: 'Sciences', courses: 12, status: 'active' },
+    { id: 2, name: 'ENG L2', faculty: 'Engineering', courses: 15, status: 'active' },
+    { id: 3, name: 'BUS L1', faculty: 'Business', courses: 10, status: 'pending' },
+  ]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTimetable, setNewTimetable] = useState({ name: '', faculty: '', courses: '' });
+
+  const handleAddTimetable = () => {
+    if (newTimetable.name && newTimetable.faculty) {
+      setTimetables([
+        ...timetables,
+        { id: Date.now(), ...newTimetable, courses: parseInt(newTimetable.courses) || 0, status: 'pending' }
+      ]);
+      setNewTimetable({ name: '', faculty: '', courses: '' });
+      setShowAddForm(false);
+    }
+  };
+
+  const handleDeleteTimetable = (id) => {
+    setTimetables(timetables.filter(t => t.id !== id));
+  };
 
   return (
     <div className='min-h-screen bg-gray-50 flex flex-col'>
@@ -14,10 +35,8 @@ const AdminDashboard = () => {
         {/* Dashboard Header */}
         <div className='bg-white border-b border-gray-200'>
           <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-            <div>
-              <h1 className='text-3xl font-bold text-gray-900 mb-1'>Tableau de bord Administration</h1>
-              <p className='text-gray-600 text-sm'>Gérez les emplois du temps et les horaires de l'université</p>
-            </div>
+            <h1 className='text-3xl font-bold text-gray-900'>Tableau de bord Administration</h1>
+            <p className='text-gray-600 text-sm mt-1'>Gérez les emplois du temps et les horaires</p>
           </div>
         </div>
 
@@ -74,76 +93,47 @@ const AdminDashboard = () => {
           {/* Overview Tab */}
           {activeTab === 'overview' && (
             <div>
-              <h2 className='text-xl font-bold text-gray-900 mb-6'>Dashboard Overview</h2>
-              <div className='grid grid-cols-1 md:grid-cols-4 gap-6 mb-8'>
-                {/* Stats Cards */}
-                <div className='bg-white rounded-lg shadow p-6 border-t-4 border-blue-600'>
-                  <div className='text-gray-600 text-sm font-medium'>Total Faculties</div>
-                  <div className='text-3xl font-bold text-gray-900 mt-2'>5</div>
-                  <div className='text-xs text-gray-500 mt-2'>Active</div>
+              <h2 className='text-xl font-bold text-gray-900 mb-6'>Aperçu du tableau de bord</h2>
+              
+              {/* Stats Cards - Clean */}
+              <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-8'>
+                <div className='bg-white rounded-md border border-gray-200 p-6'>
+                  <div className='text-sm text-gray-600 font-medium mb-2'>Total Facultés</div>
+                  <div className='text-3xl font-bold text-gray-900'>5</div>
+                  <div className='text-xs text-gray-500 mt-2'>Actives</div>
                 </div>
-                <div className='bg-white rounded-lg shadow p-6 border-t-4 border-green-600'>
-                  <div className='text-gray-600 text-sm font-medium'>Total Departments</div>
-                  <div className='text-3xl font-bold text-gray-900 mt-2'>18</div>
-                  <div className='text-xs text-gray-500 mt-2'>Across all faculties</div>
+                <div className='bg-white rounded-md border border-gray-200 p-6'>
+                  <div className='text-sm text-gray-600 font-medium mb-2'>Total Départements</div>
+                  <div className='text-3xl font-bold text-gray-900'>18</div>
+                  <div className='text-xs text-gray-500 mt-2'>Tous les départements</div>
                 </div>
-                <div className='bg-white rounded-lg shadow p-6 border-t-4 border-purple-600'>
-                  <div className='text-gray-600 text-sm font-medium'>Programs</div>
-                  <div className='text-3xl font-bold text-gray-900 mt-2'>42</div>
-                  <div className='text-xs text-gray-500 mt-2'>Active programs</div>
+                <div className='bg-white rounded-md border border-gray-200 p-6'>
+                  <div className='text-sm text-gray-600 font-medium mb-2'>Programmes</div>
+                  <div className='text-3xl font-bold text-gray-900'>42</div>
+                  <div className='text-xs text-gray-500 mt-2'>Programmes actifs</div>
                 </div>
-                <div className='bg-white rounded-lg shadow p-6 border-t-4 border-orange-600'>
-                  <div className='text-gray-600 text-sm font-medium'>Last Updated</div>
-                  <div className='text-sm font-bold text-gray-900 mt-2'>Today</div>
-                  <div className='text-xs text-gray-500 mt-2'>2:30 PM</div>
+                <div className='bg-white rounded-md border border-gray-200 p-6'>
+                  <div className='text-sm text-gray-600 font-medium mb-2'>Dernière mise à jour</div>
+                  <div className='text-2xl font-bold text-gray-900'>Aujourd'hui</div>
+                  <div className='text-xs text-gray-500 mt-2'>14:30</div>
                 </div>
               </div>
 
               {/* Recent Activity */}
-              <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-                <div className='bg-white rounded-lg shadow p-6'>
-                  <h3 className='text-lg font-bold text-gray-900 mb-4'>Recent Timetables</h3>
-                  <div className='space-y-3'>
-                    <div className='flex items-center justify-between py-3 border-b'>
+              <div className='bg-white rounded-md border border-gray-200 p-6'>
+                <h3 className='text-lg font-bold text-gray-900 mb-4'>Emplois du temps récents</h3>
+                <div className='divide-y'>
+                  {timetables.slice(0, 3).map((item) => (
+                    <div key={item.id} className='py-4 flex justify-between items-center'>
                       <div>
-                        <div className='font-medium text-gray-900'>Computer Science L1</div>
-                        <div className='text-xs text-gray-500'>Faculty of Sciences</div>
+                        <div className='font-medium text-gray-900'>{item.name}</div>
+                        <div className='text-xs text-gray-500'>{item.faculty}</div>
                       </div>
-                      <span className='text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded'>Updated</span>
+                      <span className='text-xs px-2 py-1 rounded bg-gray-100 text-gray-700'>
+                        {item.status}
+                      </span>
                     </div>
-                    <div className='flex items-center justify-between py-3 border-b'>
-                      <div>
-                        <div className='font-medium text-gray-900'>Engineering L2</div>
-                        <div className='text-xs text-gray-500'>Faculty of Engineering</div>
-                      </div>
-                      <span className='text-xs bg-green-100 text-green-700 px-2 py-1 rounded'>New</span>
-                    </div>
-                    <div className='flex items-center justify-between py-3'>
-                      <div>
-                        <div className='font-medium text-gray-900'>Business Administration</div>
-                        <div className='text-xs text-gray-500'>Faculty of Business</div>
-                      </div>
-                      <span className='text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded'>Pending</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className='bg-white rounded-lg shadow p-6'>
-                  <h3 className='text-lg font-bold text-gray-900 mb-4'>Quick Actions</h3>
-                  <div className='space-y-2'>
-                    <button className='w-full text-left px-4 py-3 rounded-lg hover:bg-blue-50 text-blue-600 font-medium transition'>
-                      + Add New Timetable
-                    </button>
-                    <button className='w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition'>
-                      📋 View All Schedules
-                    </button>
-                    <button className='w-full text-left px-4 py-3 rounded-lg hover:bg-gray-50 text-gray-700 font-medium transition'>
-                      ⚙️ System Settings
-                    </button>
-                    <button className='w-full text-left px-4 py-3 rounded-lg hover:bg-red-50 text-red-600 font-medium transition'>
-                      📊 Generate Report
-                    </button>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -153,47 +143,83 @@ const AdminDashboard = () => {
           {activeTab === 'timetables' && (
             <div>
               <div className='flex justify-between items-center mb-6'>
-                <h2 className='text-xl font-bold text-gray-900'>Manage Timetables</h2>
-                <button className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition'>
-                  + Add Timetable
+                <h2 className='text-xl font-bold text-gray-900'>Gérer les emplois du temps</h2>
+                <button 
+                  onClick={() => setShowAddForm(!showAddForm)}
+                  className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                >
+                  {showAddForm ? 'Annuler' : 'Ajouter un nouvel emploi du temps'}
                 </button>
               </div>
-              <div className='bg-white rounded-lg shadow overflow-hidden'>
+
+              {/* Add Form */}
+              {showAddForm && (
+                <div className='bg-white rounded-md border border-gray-200 p-6 mb-6'>
+                  <h3 className='text-base font-semibold text-gray-900 mb-4'>Nouvel emploi du temps</h3>
+                  <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+                    <input
+                      type='text'
+                      placeholder='Nom'
+                      value={newTimetable.name}
+                      onChange={(e) => setNewTimetable({...newTimetable, name: e.target.value})}
+                      className='px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600'
+                    />
+                    <input
+                      type='text'
+                      placeholder='Faculté'
+                      value={newTimetable.faculty}
+                      onChange={(e) => setNewTimetable({...newTimetable, faculty: e.target.value})}
+                      className='px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600'
+                    />
+                    <input
+                      type='number'
+                      placeholder='Nombre de cours'
+                      value={newTimetable.courses}
+                      onChange={(e) => setNewTimetable({...newTimetable, courses: e.target.value})}
+                      className='px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-blue-600'
+                    />
+                  </div>
+                  <button 
+                    onClick={handleAddTimetable}
+                    className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                  >
+                    Enregistrer
+                  </button>
+                </div>
+              )}
+
+              {/* Table */}
+              <div className='bg-white rounded-md border border-gray-200 overflow-hidden'>
                 <table className='w-full'>
                   <thead className='bg-gray-50 border-b'>
                     <tr>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Name</th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Faculty</th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Courses</th>
-                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Status</th>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Nom</th>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Faculté</th>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Cours</th>
+                      <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Statut</th>
                       <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>Actions</th>
                     </tr>
                   </thead>
                   <tbody className='divide-y'>
-                    <tr className='hover:bg-gray-50'>
-                      <td className='px-6 py-4 text-sm text-gray-900 font-medium'>CS L1 - 2024/2025</td>
-                      <td className='px-6 py-4 text-sm text-gray-600'>Sciences</td>
-                      <td className='px-6 py-4 text-sm text-gray-600'>24</td>
-                      <td className='px-6 py-4 text-sm'>
-                        <span className='bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-medium'>Active</span>
-                      </td>
-                      <td className='px-6 py-4 text-sm space-x-2'>
-                        <button className='text-blue-600 hover:text-blue-700 font-medium'>Edit</button>
-                        <button className='text-red-600 hover:text-red-700 font-medium'>Delete</button>
-                      </td>
-                    </tr>
-                    <tr className='hover:bg-gray-50'>
-                      <td className='px-6 py-4 text-sm text-gray-900 font-medium'>Eng L2 - 2024/2025</td>
-                      <td className='px-6 py-4 text-sm text-gray-600'>Engineering</td>
-                      <td className='px-6 py-4 text-sm text-gray-600'>20</td>
-                      <td className='px-6 py-4 text-sm'>
-                        <span className='bg-green-100 text-green-700 px-3 py-1 rounded text-xs font-medium'>Active</span>
-                      </td>
-                      <td className='px-6 py-4 text-sm space-x-2'>
-                        <button className='text-blue-600 hover:text-blue-700 font-medium'>Edit</button>
-                        <button className='text-red-600 hover:text-red-700 font-medium'>Delete</button>
-                      </td>
-                    </tr>
+                    {timetables.map((item) => (
+                      <tr key={item.id} className='hover:bg-gray-50'>
+                        <td className='px-6 py-4 text-sm text-gray-900 font-medium'>{item.name}</td>
+                        <td className='px-6 py-4 text-sm text-gray-600'>{item.faculty}</td>
+                        <td className='px-6 py-4 text-sm text-gray-600'>{item.courses}</td>
+                        <td className='px-6 py-4 text-sm'>
+                          <span className='bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs'>{item.status}</span>
+                        </td>
+                        <td className='px-6 py-4 text-sm space-x-4'>
+                          <button className='text-blue-600 hover:text-blue-700 text-sm font-medium'>Éditer</button>
+                          <button 
+                            onClick={() => handleDeleteTimetable(item.id)}
+                            className='text-red-600 hover:text-red-700 text-sm font-medium'
+                          >
+                            Supprimer
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
@@ -203,30 +229,9 @@ const AdminDashboard = () => {
           {/* Faculty Tab */}
           {activeTab === 'faculty' && (
             <div>
-              <div className='flex justify-between items-center mb-6'>
-                <h2 className='text-xl font-bold text-gray-900'>Faculty & Departments</h2>
-                <button className='bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition'>
-                  + Add Faculty
-                </button>
-              </div>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                {['Sciences', 'Engineering', 'Letters & Human Sciences', 'Business', 'Education'].map((faculty, idx) => (
-                  <div key={idx} className='bg-white rounded-lg shadow p-6'>
-                    <h3 className='text-lg font-bold text-gray-900 mb-4'>Faculty of {faculty}</h3>
-                    <div className='space-y-2 mb-4'>
-                      <p className='text-sm text-gray-600'>Departments: <span className='font-semibold text-gray-900'>4</span></p>
-                      <p className='text-sm text-gray-600'>Programs: <span className='font-semibold text-gray-900'>8</span></p>
-                    </div>
-                    <div className='flex gap-2'>
-                      <button className='flex-1 text-blue-600 hover:bg-blue-50 px-3 py-2 rounded font-medium transition text-sm'>
-                        Edit
-                      </button>
-                      <button className='flex-1 text-red-600 hover:bg-red-50 px-3 py-2 rounded font-medium transition text-sm'>
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
+              <h2 className='text-xl font-bold text-gray-900 mb-6'>Facultés & Départements</h2>
+              <div className='bg-white rounded-md border border-gray-200 p-6'>
+                <p className='text-gray-600 text-sm'>Fonctionnalité en développement</p>
               </div>
             </div>
           )}
@@ -234,39 +239,9 @@ const AdminDashboard = () => {
           {/* Settings Tab */}
           {activeTab === 'settings' && (
             <div>
-              <h2 className='text-xl font-bold text-gray-900 mb-6'>System Settings</h2>
-              <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
-                <div className='bg-white rounded-lg shadow p-6'>
-                  <h3 className='text-lg font-bold text-gray-900 mb-4'>General Settings</h3>
-                  <div className='space-y-4'>
-                    <div>
-                      <label className='block text-sm font-medium text-gray-900 mb-1'>University Name</label>
-                      <input type='text' placeholder='Université de Yaoundé I' className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600' />
-                    </div>
-                    <div>
-                      <label className='block text-sm font-medium text-gray-900 mb-1'>Academic Year</label>
-                      <input type='text' placeholder='2024/2025' className='w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-600' />
-                    </div>
-                    <button className='w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition font-medium'>
-                      Save Changes
-                    </button>
-                  </div>
-                </div>
-
-                <div className='bg-white rounded-lg shadow p-6'>
-                  <h3 className='text-lg font-bold text-gray-900 mb-4'>Backup & Export</h3>
-                  <div className='space-y-3'>
-                    <button className='w-full border-2 border-blue-600 text-blue-600 py-2 rounded-lg hover:bg-blue-50 transition font-medium'>
-                      📥 Export All Data
-                    </button>
-                    <button className='w-full border-2 border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition font-medium'>
-                      🔄 Create Backup
-                    </button>
-                    <button className='w-full border-2 border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-50 transition font-medium'>
-                      📋 View Backups
-                    </button>
-                  </div>
-                </div>
+              <h2 className='text-xl font-bold text-gray-900 mb-6'>Paramètres</h2>
+              <div className='bg-white rounded-md border border-gray-200 p-6'>
+                <p className='text-gray-600 text-sm'>Fonctionnalité en développement</p>
               </div>
             </div>
           )}
