@@ -79,23 +79,36 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
 
   return (
     <div>
-      {/* Search Section */}
-      <div className='mb-6'>
-        <label className='block text-sm font-semibold text-gray-700 mb-3'>
-          Search for a course
-        </label>
-        <CourseSearch
-          courses={allCourses}
-          onFilteredCoursesChange={(filtered) => {
-            setSearchTerm('');
-          }}
+      {/* Filters */}
+      <div className='flex flex-wrap gap-4 mb-8 justify-start'>
+        <Select
+          placeholder='Départements'
+          options={departments}
+          className='min-w-[200px]'
         />
-        <input
-          type='text'
-          placeholder='Search by course, teacher or room...'
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className='w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors'
+        <Select
+          placeholder='Niveau'
+          options={[
+            { id: '1', name: 'Licence 1' },
+            { id: '2', name: 'Licence 2' },
+            { id: '3', name: 'Licence 3' },
+            { id: '4', name: 'Master 1' },
+            { id: '5', name: 'Master 2' },
+          ]}
+          className='min-w-[200px]'
+        />
+        <Select
+          placeholder='Semaine'
+          options={weeks}
+          className='min-w-[200px]'
+        />
+        <Select
+          placeholder='Télécharger'
+          options={[
+            { id: '1', name: 'Pdf'},
+            { id: '1', name: 'Lien'},
+          ]}
+          className='w-2/3'
         />
       </div>
 
@@ -146,18 +159,17 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
       </div>
 
       {/* Timetable Grid */}
-      <div className='overflow-x-auto rounded-lg shadow-lg' ref={tableRef}>
-        <table className='w-full border-collapse'>
-          {/* Header */}
-          <thead>
+      <div className='overflow-x-auto bg-white'>
+        <table className='min-w-full divide-y divide-gray-200 border border-gray-300'>
+          <thead className='bg-blue-500 text-white'>
             <tr>
-              <th className='gradient-primary text-white p-4 text-center font-bold border-2 border-gray-300 w-24'>
-                Time
+              <th className='px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-r border-gray-300 w-1/12'>
+                Heure
               </th>
               {DAYS_OF_WEEK.map((day) => (
                 <th
                   key={day}
-                  className='bg-gradient-to-br from-blue-600 to-purple-600 text-white p-4 text-center font-bold border-2 border-gray-300 flex-1 min-w-32'
+                  className='px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-r border-gray-300 w-1/5'
                 >
                   <div className='font-extrabold text-sm'>{day}</div>
                 </th>
