@@ -69,34 +69,38 @@ const StudentPortal = () => {
   };
 
   return (
-    <div className='min-h-screen bg-gray-100 p-4 sm:p-8 flex flex-col items-center'>
-      <div className='max-w-5xl w-full mx-auto bg-white shadow-xl rounded-lg overflow-hidden'>
-        <Header />
-
-        <main className='flex-grow bg-white'>
-          <div className='max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12'>
-
+    <div className='min-h-screen bg-gray-100 flex flex-col items-center pt-22'>
+      <Header />
+      <div className='min-h-screen p-4 flex flex-col max-w-5xl w-full bg-white shadow-xl rounded-lg overflow-hidden'>
+        <main className='flex-1 bg-white'>
+          <div className='max-w-6xl'>
             {/* Progress Indicator */}
-            <div className='flex justify-between items-center gap-2 mb-8'>
+            <div className='flex justify-between items-center gap-1 pb-6'>
               {[1, 2, 3, 4].map((step) => (
                 <div key={step} className='flex-1 flex items-center'>
-                  <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
-                    step <= currentStep
-                      ? 'bg-gray-900 text-white'
-                      : 'bg-gray-300 text-gray-600'
-                  }`}>
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
+                      step <= currentStep
+                        ? 'bg-gray-900 text-white'
+                        : 'bg-gray-300 text-gray-600'
+                    }`}
+                  >
                     {step}
                   </div>
-                  {step < 4 && <div className={`flex-1 h-1 mx-2 ${
-                    step < currentStep ? 'bg-gray-900' : 'bg-gray-300'
-                  }`}></div>}
+                  {step < 4 && (
+                    <div
+                      className={`flex-1 h-1 ${
+                        step < currentStep ? 'bg-gray-900' : 'bg-gray-300'
+                      }`}
+                    ></div>
+                  )}
                 </div>
               ))}
             </div>
 
             {/* Step Title and Description */}
-            <div className='mb-8 text-center'>
-              <h2 className='text-2xl font-bold text-gray-900 mb-2'>
+            <div className='text-center mb-8'>
+              <h2 className='text-2xl font-bold text-gray-900'>
                 {STUDENT_PORTAL_STEPS[currentStep - 1].name}
               </h2>
               <p className='text-gray-600'>{getStepDescription()}</p>
@@ -106,9 +110,9 @@ const StudentPortal = () => {
             {currentStep > 1 && (
               <button
                 onClick={handleBack}
-                className='mb-6 text-gray-900 hover:text-gray-800 font-medium flex items-center'
+                className='text-gray-900 hover:text-gray-800 font-medium flex items-center gap-2'
               >
-                <BackIcon className='h-5 w-5 mr-1' />
+                <BackIcon className='h-5 w-5' />
                 Back
               </button>
             )}
@@ -162,9 +166,8 @@ const StudentPortal = () => {
             )}
           </div>
         </main>
-
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };

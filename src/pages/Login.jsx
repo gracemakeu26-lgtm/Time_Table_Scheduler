@@ -52,7 +52,7 @@ const Login = () => {
               <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">
                 Accès administration
               </h2>
-              <p className="text-sm text-gray-500 mt-2">
+              <p className='text-sm text-gray-500 mt-2'>
                 Connectez-vous pour gérer les emplois du temps
               </p>
             </div>
@@ -69,9 +69,13 @@ const Login = () => {
                   onBlur={handleBlur}
                   error={errors.identifiant}
                   required
-                  className="mb-0"
+                  className='mb-0'
                 />
-                {errors.identifiant && <p className="text-red-600 text-xs mt-1">{errors.identifiant}</p>}
+                {errors.identifiant && (
+                  <p className='text-red-600 text-xs mt-1'>
+                    {errors.identifiant}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -85,26 +89,30 @@ const Login = () => {
                   onBlur={handleBlur}
                   error={errors.motdepasse}
                   required
-                  className="mb-0"
+                  className='mb-0'
                 />
-                {errors.motdepasse && <p className="text-red-600 text-xs mt-1">{errors.motdepasse}</p>}
+                {errors.motdepasse && (
+                  <p className='text-red-600 text-xs mt-1'>
+                    {errors.motdepasse}
+                  </p>
+                )}
               </div>
 
               <div className="flex flex-col items-center space-y-3 mt-2 w-3xs">
                 <Button
-                  type="submit"
-                  variant="primary"
+                  type='submit'
+                  variant='primary'
                   disabled={isSubmitting}
-                  className="w-full py-2"
+                  className='w-full py-2'
                 >
                   {isSubmitting ? 'Connexion...' : 'Se connecter'}
                 </Button>
 
                 <Link
-                  to="/"
-                  className="text-sm text-gray-500 hover:text-blue-600 transition-colors flex items-center"
+                  to='/'
+                  className='text-sm text-gray-500 hover:text-blue-600 transition-colors flex items-center'
                 >
-                  <BackIcon className="h-4 w-4 mr-1" />
+                  <BackIcon className='h-4 w-4 mr-1' />
                   Retour à l'accueil
                 </Link>
               </div>
