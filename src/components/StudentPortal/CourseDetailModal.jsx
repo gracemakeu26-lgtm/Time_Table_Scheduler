@@ -24,7 +24,7 @@ const CourseDetailModal = ({ course, isOpen, onClose }) => {
           <div className='px-8 py-6 space-y-4'>
             {/* Course Type Badge */}
             <div className='flex items-center gap-3 pb-4 border-b border-gray-200'>
-              <div className='w-3 h-3 rounded-full bg-gradient-to-r from-blue-500 to-purple-500'></div>
+              <div className='w-3 h-3 rounded-full bg-linear-to-r from-blue-500 to-purple-500'></div>
               <span className='font-semibold text-gray-700'>{course.type}</span>
             </div>
 
@@ -33,7 +33,9 @@ const CourseDetailModal = ({ course, isOpen, onClose }) => {
               <p className='text-sm font-semibold text-gray-600 uppercase tracking-wide'>
                 Enseignant
               </p>
-              <p className='text-lg font-bold text-gray-900'>{course.teacher}</p>
+              <p className='text-lg font-bold text-gray-900'>
+                {course.teacher}
+              </p>
             </div>
 
             {/* Room */}
@@ -62,7 +64,7 @@ const CourseDetailModal = ({ course, isOpen, onClose }) => {
           </div>
 
           {/* Footer */}
-          <div className='px-8 py-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-b-3xl border-t border-gray-200 flex gap-3'>
+          <div className='px-8 py-4 bg-linear-to-r from-blue-50 to-purple-50 rounded-b-3xl border-t border-gray-200 flex gap-3'>
             <button
               onClick={onClose}
               className='flex-1 px-4 py-2 font-semibold text-gray-700 hover:bg-white transition-colors rounded-lg border border-gray-300'
@@ -76,7 +78,7 @@ const CourseDetailModal = ({ course, isOpen, onClose }) => {
                 navigator.clipboard.writeText(text);
                 alert('Informations copiées!');
               }}
-              className='flex-1 px-4 py-2 font-semibold text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all rounded-lg'
+              className='flex-1 px-4 py-2 font-semibold text-white bg-linear-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all rounded-lg'
             >
               Copier
             </button>

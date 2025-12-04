@@ -105,7 +105,7 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
       </div>
 
       {/* Filters and Actions */}
-      <div className='flex flex-wrap gap-4 mb-8 justify-between bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg'>
+      <div className='flex flex-wrap gap-4 mb-8 justify-between bg-linear-to-r from-blue-50 to-purple-50 p-6 rounded-lg'>
         <div className='flex flex-wrap gap-4'>
           <div className='flex-1 min-w-[200px]'>
             <label className='block text-sm font-semibold text-gray-700 mb-2'>
@@ -173,18 +173,21 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
           <tbody>
             {TIME_SLOTS.map((timeSlot) => (
               <tr key={timeSlot} className='hover:bg-blue-50 transition-colors'>
-                <td className='bg-gradient-to-r from-gray-200 to-gray-100 p-4 text-center font-bold border-2 border-gray-300 text-gray-800 whitespace-nowrap'>
+                <td className='bg-linear-to-r from-gray-200 to-gray-100 p-4 text-center font-bold border-2 border-gray-300 text-gray-800 whitespace-nowrap'>
                   {timeSlot}
                 </td>
                 {DAYS_OF_WEEK.map((day) => {
                   const course = getCourseForSlot(day, timeSlot);
                   const courseId = `${day}-${timeSlot}`;
-                  const isFiltered = !searchTerm || filteredCourseIds.has(courseId);
+                  const isFiltered =
+                    !searchTerm || filteredCourseIds.has(courseId);
                   return (
                     <td
                       key={courseId}
                       className={`border-2 border-gray-300 p-2 min-h-[120px] align-top transition-colors ${
-                        isFiltered ? 'bg-gray-50 hover:bg-gray-100' : 'bg-gray-300 opacity-30'
+                        isFiltered
+                          ? 'bg-gray-50 hover:bg-gray-100'
+                          : 'bg-gray-300 opacity-30'
                       }`}
                     >
                       {course && isFiltered ? (
@@ -201,10 +204,12 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
                             {course.course}
                           </div>
                           <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
-                            <span className='font-semibold'>Teacher:</span> {course.teacher.split(' ')[0]}
+                            <span className='font-semibold'>Teacher:</span>{' '}
+                            {course.teacher.split(' ')[0]}
                           </div>
                           <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
-                            <span className='font-semibold'>Room:</span> {course.room}
+                            <span className='font-semibold'>Room:</span>{' '}
+                            {course.room}
                           </div>
                         </div>
                       ) : !course && isFiltered ? (
