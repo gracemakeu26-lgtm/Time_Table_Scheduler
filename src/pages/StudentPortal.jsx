@@ -70,13 +70,13 @@ const StudentPortal = () => {
   return (
     <div className='min-h-screen bg-gray-100 flex flex-col items-center pt-22'>
       <Header />
-      <div className='min-h-screen p-9 flex flex-col max-w-5xl my-4 w-full bg-white shadow-xl rounded-lg overflow-hidden'>
-        <main className='flex-1 bg-white '>
-          <div className='max-w-6xl mt-2.5'>
+      <div className='min-h-[71vh] p-4 flex flex-col max-w-5xl w-full bg-white shadow-xl rounded-lg overflow-hidden'>
+        <main className='flex-1 bg-white'>
+          <div className='max-w-6xl'>
             {/* Progress Indicator */}
             <div className='flex justify-between items-center gap-1 mt-8 pb-10'>
               {[1, 2, 3, 4].map((step) => (
-                <div key={step} className='flex-1 flex items-center  items-centerp-5 m-5'>
+                <div key={step} className='flex-1 flex items-center'>
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm ${
                       step <= currentStep
@@ -98,7 +98,7 @@ const StudentPortal = () => {
             </div>
 
             {/* Step Title and Description */}
-            <div className='text-center mb-8 m-7'>
+            <div className='text-center mb-8'>
               <h2 className='text-2xl font-bold text-gray-900'>
                 {STUDENT_PORTAL_STEPS[currentStep - 1].name}
               </h2>
@@ -118,7 +118,7 @@ const StudentPortal = () => {
 
             {/* Step 1: Faculties */}
             {currentStep === 1 && (
-              <div className='grid grid-cols-2 md:grid-cols-3 gap-7 h-0.5'>
+              <div className='grid grid-cols-2 md:grid-cols-3 gap-7'>
                 {facultiesData.faculties.map((faculty) => (
                   <FacultyCard
                     key={faculty.id}

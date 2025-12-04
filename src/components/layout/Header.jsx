@@ -19,10 +19,10 @@ const Header = () => {
   });
 
   return (
-    <header className="bg-gray-200 w-full flex justify-around py-4 px-6 md:px-12 rounded-t-lg mb-auto">
-      <div className="max-w-5xl w-full px-auto flex justify-between items-center mx-auto h-24">
+    <header className='fixed top-0 z-50 bg-gray-200 w-full flex justify-around py-4 px-6 md:px-12 rounded-t-lg mb-auto'>
+      <div className='max-w-5xl w-full px-auto flex justify-between items-center mx-auto h-12'>
         {/* Logo and UNIVERSITY NAME */}
-        <div className='flex items-center space-x-4 grow gap-3 ml-60'>
+        <div className='flex items-center space-x-4 grow gap-3'>
           <div
             className='w-12 h-12 rounded-full border border-gray-300 flex shrink-0 bg-cover bg-center'
             style={{ backgroundImage: "url('/logo.jpg')" }}

@@ -42,14 +42,13 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-linear-to-br from-white via-gray-50 to-blue-50 p-4 sm:p-8 flex flex-col items-center">
-      <div className="w-full mx-auto bg-white/95 shadow-2xl overflow-hidden flex-1 md:h-[80vh] flex gap-7 flex-col">
-        <Header />
-
-        <main className="py-6 px-6  **:md:px-12 lg:px-16 flex gap-6 md:gap-10 mx-4 md:mx-10 my-6 md:my-10 justify-center flex-1 overflow-auto items-center text-center">
-          <div className="border border-gray-200 rounded-lg shadow-md max-w-sm w-full bg-white p-6 md:p-10 flex flex-col justify-center items-center gap-6 md:gap-8">
-            <div className="text-center mt-6 pt-2.5">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">
+    <div className='min-h-screen w-full bg-linear-to-br from-white via-gray-50 to-blue-50 pt-18 flex flex-col items-center'>
+      <Header />
+      <div className='mx-auto shadow-xl rounded-lg overflow-hidden flex-1 flex flex-col'>
+        <main className='py-6 px-6 flex gap-6 md:gap-10 mx-4 md:mx-10 my-6 md:my-10 justify-center flex-1 overflow-auto items-center text-center'>
+          <div className='border border-gray-200 rounded-lg shadow-md max-w-sm w-full bg-white p-6 md:p-10 flex flex-col justify-center items-center gap-6 md:gap-8'>
+            <div className='text-center mt-6 pt-2.5'>
+              <h2 className='text-2xl md:text-3xl font-extrabold text-gray-800'>
                 Accès administration
               </h2>
               <p className='text-sm text-gray-500 mt-2'>
@@ -57,19 +56,22 @@ const Login = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="items-center flex flex-col gap-4 w-full">
+            <form
+              onSubmit={handleSubmit}
+              className='items-center flex flex-col gap-4 w-full'
+            >
               <div>
                 <Input
-                  label=""
+                  label=''
                   placeholder='Identifiant'
-                  type="text"
-                  name="identifiant"
+                  type='text'
+                  name='identifiant'
                   value={values.identifiant}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={errors.identifiant}
                   required
-                  className='mb-0'
+                  className='font-medium'
                 />
                 {errors.identifiant && (
                   <p className='text-red-600 text-xs mt-1'>
@@ -80,10 +82,10 @@ const Login = () => {
 
               <div>
                 <Input
-                  label=""
+                  label=''
                   placeholder='Mot de passe'
-                  type="password"
-                  name="motdepasse"
+                  type='password'
+                  name='motdepasse'
                   value={values.motdepasse}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -98,7 +100,7 @@ const Login = () => {
                 )}
               </div>
 
-              <div className="flex flex-col items-center space-y-3 mt-2 w-3xs">
+              <div className='flex flex-col items-center space-y-3 mt-2 w-3xs'>
                 <Button
                   type='submit'
                   variant='primary'
@@ -119,9 +121,8 @@ const Login = () => {
             </form>
           </div>
         </main>
-
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 };

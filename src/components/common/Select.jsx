@@ -13,7 +13,7 @@ const Select = ({
   required = false,
 }) => {
   return (
-    <div className={`w-full ${className}`}>
+    <div className={`${className} ${className.includes('w-') ? '' : 'w-full'}`}>
       {label && (
         <label className='block text-sm font-medium text-gray-700 mb-2'>
           {label}

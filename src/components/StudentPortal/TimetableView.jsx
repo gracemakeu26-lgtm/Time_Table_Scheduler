@@ -80,11 +80,11 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
   return (
     <div>
       {/* Filters */}
-      <div className='flex flex-wrap gap-4 mb-8 justify-start'>
+      <div className='flex flex-wrap gap-4 justify-start items-center '>
         <Select
           placeholder='Départements'
           options={departments}
-          className='min-w-[200px]'
+          className='min-w-[200px] font-medium'
         />
         <Select
           placeholder='Niveau'
@@ -95,37 +95,20 @@ const TimetableView = ({ selectedProgram, departments, weeks }) => {
             { id: '4', name: 'Master 1' },
             { id: '5', name: 'Master 2' },
           ]}
-          className='min-w-[200px]'
+          className='min-w-[200px] font-medium'
         />
         <Select
           placeholder='Semaine'
           options={weeks}
-          className='min-w-[200px]'
+          className='min-w-[200px] font-medium'
         />
       </div>
 
       {/* Filters and Actions */}
-      <div className='flex flex-wrap gap-4 mb-8 justify-between bg-linear-to-r from-blue-50 to-purple-50 p-6 rounded-lg'>
+      <div className='flex flex-wrap gap-4 mb-4 justify-between  items-center bg-linear-to-r from-blue-50 to-purple-50 p-6 rounded-lg'>
         <div className='flex flex-wrap gap-4'>
-          <div className='flex-1 min-w-[200px]'>
-            <label className='block text-sm font-semibold text-gray-700 mb-2'>
-              Week
-            </label>
-            <select
-              value={selectedWeek}
-              onChange={(e) => setSelectedWeek(e.target.value)}
-              className='w-full px-4 py-2 border-2 border-blue-300 rounded-lg focus:outline-none focus:border-blue-600 transition-colors'
-            >
-              <option value='week1'>Week 1</option>
-              <option value='week2'>Week 2</option>
-              <option value='week3'>Week 3</option>
-              <option value='week4'>Week 4</option>
-            </select>
-          </div>
-          <div className='flex items-end'>
-            <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
-              Program: <span className='text-blue-600'>{selectedProgram}</span>
-            </div>
+          <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
+            Program: <span className='text-blue-600'>{selectedProgram}</span>
           </div>
         </div>
 

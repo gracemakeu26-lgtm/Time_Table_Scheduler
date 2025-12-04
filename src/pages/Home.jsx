@@ -10,7 +10,7 @@ const Home = () => {
 
   return (
     <div
-      className="min-h-screen p-4 sm:p-8 flex flex-col items-center"
+      className='min-h-screen flex flex-col items-center'
       style={{
         backgroundImage: "url('/bg-university.png')",
         backgroundRepeat: 'no-repeat',
@@ -18,43 +18,46 @@ const Home = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="h-screen max-w-5xl w-full mx-auto shadow-xl rounded-lg overflow-hidden flex-1 flex flex-col">
+      <div className='h-screen max-w-5xl w-full mx-auto shadow-xl rounded-lg overflow-hidden flex-1 flex flex-col'>
         <Header currentPath={location.pathname} />
 
-        <main className="py-16 px-6 text-center flex-1 flex flex-col justify-center items-center gap-4">
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-4">
+        <main className='py-16 px-6 text-center flex-1 flex flex-col justify-center items-center gap-4'>
+          <h1 className='text-4xl font-extrabold text-gray-900 mb-4'>
             {APP_INFO?.name || 'Time Table Scheduler'}
           </h1>
-          <h2 className="text-xl text-green-100 font-semibold mb-10">
+          <h2 className='text-xl text-black font-semibold mb-10'>
             {APP_INFO?.tagline || 'Consultez facilement les emplois du temps'}
           </h2>
 
-          <div className="flex flex-col md:flex-row justify-center items-center gap-6 px-3 py-2 m-3">
-            <Link to="/student">
-              <Button size="lg">Consulter les emplois du temps</Button>
+          <div className='flex flex-col md:flex-row justify-center items-center gap-6 px-3 py-2 '>
+            <Link to='/student'>
+              <Button variant='primary' className='px-4 py-3'>
+                Consulter les emplois du temps
+              </Button>
             </Link>
 
-            <Link to="/login">
-              <Button size="lg" variant="secondary">
+            <Link to='/login'>
+              <Button variant='secondary' className='px-4 py-3'>
                 Connexion Admin
               </Button>
             </Link>
           </div>
         </main>
 
-        <section className="py-10 px-6 flex justify-center items-center">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-cyan-950 text-lg my-auto mb leading-relaxed">
-              The University of Yaoundé I timetable system allows students, teachers and parents to easily view class schedules, classrooms and professional information in one place.
+        <section className='py-10 px-6 flex justify-center items-center'>
+          <div className='max-w-3xl mx-auto text-center bg-gray-800 rounded-lg bg-opacity-20 shadow-md'>
+            <p className='text-white text-lg my-auto leading-relaxed'>
+              The University of Yaoundé I timetable system allows <br />
+              students, teachers and parents to easily view class schedules,{' '}
+              <br />
+              classrooms and professional information in one place.
             </p>
           </div>
         </section>
       </div>
 
       {/* Footer wrapped in same centered container so it aligns with page content */}
-      <div className="max-w-full gap-4 w-full mx-auto px-4 sm:px-8">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

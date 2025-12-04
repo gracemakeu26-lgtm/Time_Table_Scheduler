@@ -13,7 +13,7 @@ export const FacultyCard = ({ faculty, onSelect }) => (
     onClick={() => onSelect(faculty)}
     className='cursor-pointer card-hover bg-white border border-gray-200 hover:border-blue-300 hover:shadow-md flex items-center justify-between  '
   >
-    <div className='w-12 h-12 p-3 bg-blue-50 rounded-lg mr-4 shrink-0 flex items-center justify-center text-blue-600'>
+    <div className=' p-2 bg-blue-50 rounded-lg mr-4 shrink-0 flex items-center justify-center text-blue-600'>
       <FacultyIcon />
     </div>
     <div className='grow'>
@@ -46,7 +46,7 @@ export const DepartmentCard = ({ department, onSelect }) => (
           {department.programs?.length || 0} programmes
         </div>
       </div>
-      <ArrowRightIcon className='text-gray-400 ml-4 text-lg' />
+      <ArrowRightIcon />
     </div>
   </Card>
 );
@@ -64,7 +64,7 @@ export const ProgramCard = ({ program, onSelect }) => (
         </div>
         <div className='font-medium text-gray-900'>{program}</div>
       </div>
-      <ArrowRightIcon className='text-gray-400 text-lg' />
+      <ArrowRightIcon />
     </div>
   </Card>
 );
