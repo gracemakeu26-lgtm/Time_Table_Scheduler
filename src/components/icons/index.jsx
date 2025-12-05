@@ -86,7 +86,7 @@ export const ChevronDownIcon = ({ className = 'w-4 h-4' }) => (
   </svg>
 );
 
-export const ArrowRightIcon = ({ className }) => (
+export const ArrowRightIcon = ({ className = 'text-gray-400 h-4 w-6' }) => (
   <svg
     xmlns='http://www.w3.org/2000/svg'
     className={className}

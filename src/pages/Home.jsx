@@ -10,7 +10,7 @@ const Home = () => {
 
   return (
     <div
-      className="min-h-screen p-4 sm:p-8 flex flex-col items-center"
+      className='min-h-screen flex flex-col items-center'
       style={{
         backgroundImage: "url('/assets/image.png')",
         backgroundRepeat: 'no-repeat',
@@ -18,7 +18,7 @@ const Home = () => {
         backgroundPosition: 'center',
       }}
     >
-      <div className="h-screen max-w-5xl w-full mx-auto shadow-xl rounded-lg overflow-hidden flex-1 flex flex-col">
+      <div className='h-screen max-w-5xl w-full mx-auto shadow-xl rounded-lg overflow-hidden flex-1 flex flex-col'>
         <Header currentPath={location.pathname} />
 
         <main className="py-16 px-6 text-center flex-1 flex flex-col justify-center items-center gap-4">
@@ -29,13 +29,15 @@ const Home = () => {
             {APP_INFO?.tagline || 'Consultez facilement les emplois du temps'}
           </h2>
 
-          <div className="flex flex-col md:flex-row justify-center items-center gap-6 px-3 py-2 m-3">
-            <Link to="/student">
-              <Button size="lg">Consulter les emplois du temps</Button>
+          <div className='flex flex-col md:flex-row justify-center items-center gap-6 px-3 py-2 '>
+            <Link to='/student'>
+              <Button variant='primary' className='px-4 py-3'>
+                Consulter les emplois du temps
+              </Button>
             </Link>
 
-            <Link to="/login">
-              <Button size="lg" variant="secondary">
+            <Link to='/login'>
+              <Button variant='secondary' className='px-4 py-3'>
                 Connexion Admin
               </Button>
             </Link>
@@ -52,9 +54,7 @@ const Home = () => {
       </div>
 
       {/* Footer wrapped in same centered container so it aligns with page content */}
-      <div className="max-w-full gap-4 w-full mx-auto px-4 sm:px-8">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

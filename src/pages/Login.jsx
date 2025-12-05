@@ -66,19 +66,22 @@ const Login = () => {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="items-center flex flex-col gap-4 w-full">
+            <form
+              onSubmit={handleSubmit}
+              className='items-center flex flex-col gap-4 w-full'
+            >
               <div>
                 <Input
-                  label=""
+                  label=''
                   placeholder='Identifiant'
-                  type="text"
-                  name="identifiant"
+                  type='text'
+                  name='identifiant'
                   value={values.identifiant}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={errors.identifiant}
                   required
-                  className='mb-0'
+                  className='font-medium'
                 />
                 {errors.identifiant && (
                   <p className='text-red-600 text-xs mt-1'>
@@ -89,10 +92,10 @@ const Login = () => {
 
               <div>
                 <Input
-                  label=""
+                  label=''
                   placeholder='Mot de passe'
-                  type="password"
-                  name="motdepasse"
+                  type='password'
+                  name='motdepasse'
                   value={values.motdepasse}
                   onChange={handleChange}
                   onBlur={handleBlur}
@@ -107,7 +110,7 @@ const Login = () => {
                 )}
               </div>
 
-              <div className="flex flex-col items-center space-y-3 mt-2 w-3xs">
+              <div className='flex flex-col items-center space-y-3 mt-2 w-3xs'>
                 <Button
                   type='submit'
                   variant='primary'
