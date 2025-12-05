@@ -12,7 +12,7 @@ const Home = () => {
     <div
       className='min-h-screen flex flex-col items-center'
       style={{
-        backgroundImage: "url('/assets/image.png')",
+        backgroundImage: "url('/assets/images.jpeg')",
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
@@ -22,10 +22,10 @@ const Home = () => {
         <Header currentPath={location.pathname} />
 
         <main className="py-16 px-6 text-center flex-1 flex flex-col justify-center items-center gap-4">
-          <h1 className="text-4xl font-extrabold text-gray-800 mb-4">
+          <h1 className="text-5xl font-extrabold text-gray-200 mb-4">
             {APP_INFO?.name || 'Time Table Scheduler'}
           </h1>
-          <h2 className="text-xl text-gray-200 font-semibold mb-10">
+          <h2 className="text-xl text-gray-50 font-semibold mb-10">
             {APP_INFO?.tagline || 'Consultez facilement les emplois du temps'}
           </h2>
 
@@ -46,7 +46,7 @@ const Home = () => {
 
         <section className="py-10 px-6 flex justify-center items-center">
           <div className="max-w-3xl mx-auto text-center">
-            <p className="text-gray-300 text-lg my-auto mb leading-relaxed">
+            <p className="text-gray-50 text-lg my-auto mb leading-relaxed">
               The University of Yaoundé I timetable system allows students, teachers and parents to easily view class schedules, classrooms and professional information in one place.
             </p>
           </div>

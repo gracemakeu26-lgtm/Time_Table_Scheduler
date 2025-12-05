@@ -42,99 +42,88 @@ const Login = () => {
   };
 
   return (
-    
-    <div className="min-h-screen w-full bg-linear-to-br from-white via-gray-50 to-blue-50 p-4 sm:p-8 flex flex-col items-center">
-      <div className="w-full mx-auto bg-white/95 shadow-2xl overflow-hidden flex-1 md:h-[80vh] flex gap-7 flex-col">
-        <Header />
-        <div
-      className="min-h-screen p-4 sm:p-8 flex flex-col items-center"
-      style={{
-        backgroundImage: "url('/assets/image.png')",
+
+    <div
+        className='min-h-screen flex flex-col items-center pt-22'
+        style={{
+        backgroundImage: "url('/assets/background.jpg')",
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
-    >
-        <main className="py-6 px-6  **:md:px-12 lg:px-16 flex gap-6 md:gap-10 mx-4 md:mx-10 my-6 md:my-10 justify-center flex-1 overflow-auto items-center text-center">
-          <div className="border border-gray-200 rounded-lg shadow-md max-w-sm w-full bg-white p-6 md:p-10 flex flex-col justify-center items-center gap-6 md:gap-8">
+    > 
+    {/* <div className="min-h-screen flex flex-col items-center pt-22"> */}
+      {/* full-bleed header */}
+      <Header />
+
+      {/* centered page card */}
+      <div className="w-full max-w-5xl mx-auto overflow-hidden flex-1 md:h-[80vh] flex flex-col">
+        <main className="w-full py-6 px-6 md:px-12 lg:px-16 flex gap-6 md:gap-10 mx-4 md:mx-10 my-6 md:my-10 justify-center flex-1 overflow-auto items-center text-center">
+          <div className=" border border-gray-50 hover:border-gray-500 rounded-lg max-w-md w-full p-6 md:p-10 flex flex-col justify-center items-center gap-6 md:gap-8">
             <div className="text-center mt-6 pt-2.5">
-              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-800">
+              <h2 className="text-2xl md:text-3xl font-extrabold text-gray-700">
                 Accès administration
               </h2>
-              <p className='text-sm text-gray-500 mt-2'>
+              <p className="text-sm text-gray-200 mt-2">
                 Connectez-vous pour gérer les emplois du temps
               </p>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className='items-center flex flex-col gap-4 w-full'
-            >
-              <div>
+            <form onSubmit={handleSubmit} className="items-center flex flex-col gap-4 w-full">
+              <div className="w-full">
                 <Input
-                  label=''
-                  placeholder='Identifiant'
-                  type='text'
-                  name='identifiant'
+                  label=""
+                  placeholder="Identifiant"
+                  type="text"
+                  name="identifiant"
                   value={values.identifiant}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={errors.identifiant}
                   required
-                  className='font-medium'
+                  className="mb-0"
                 />
                 {errors.identifiant && (
-                  <p className='text-red-600 text-xs mt-1'>
-                    {errors.identifiant}
-                  </p>
+                  <p className="text-red-600 text-xs mt-1">{errors.identifiant}</p>
                 )}
               </div>
 
-              <div>
+              <div className="w-full">
                 <Input
-                  label=''
-                  placeholder='Mot de passe'
-                  type='password'
-                  name='motdepasse'
+                  label=""
+                  placeholder="Mot de passe"
+                  type="password"
+                  name="motdepasse"
                   value={values.motdepasse}
                   onChange={handleChange}
                   onBlur={handleBlur}
                   error={errors.motdepasse}
                   required
-                  className='mb-0'
+                  className="mb-0"
                 />
                 {errors.motdepasse && (
-                  <p className='text-red-600 text-xs mt-1'>
-                    {errors.motdepasse}
-                  </p>
+                  <p className="text-red-600 text-xs mt-1">{errors.motdepasse}</p>
                 )}
               </div>
 
-              <div className='flex flex-col items-center space-y-3 mt-2 w-3xs'>
-                <Button
-                  type='submit'
-                  variant='primary'
-                  disabled={isSubmitting}
-                  className='w-full py-2'
-                >
+              <div className="flex flex-col items-center space-y-3 mt-2 w-full">
+                <Button type="submit" variant="primary" disabled={isSubmitting} className="w-full py-2">
                   {isSubmitting ? 'Connexion...' : 'Se connecter'}
                 </Button>
 
-                <Link
-                  to='/'
-                  className='text-sm text-gray-500 hover:text-blue-600 transition-colors flex items-center'
-                >
-                  <BackIcon className='h-4 w-4 mr-1' />
+                <Link to="/" className="text-sm text-gray-500 hover:text-blue-600 transition-colors flex items-center">
+                  <BackIcon className="h-4 w-4 mr-1" />
                   Retour à l'accueil
                 </Link>
               </div>
             </form>
           </div>
         </main>
-
-        <Footer />
       </div>
-    </div>
+
+      {/* </div>  */}
+      {/* full-bleed footer */}
+      <Footer />
     </div>
   );
 };
