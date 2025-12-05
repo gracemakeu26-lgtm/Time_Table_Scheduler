@@ -42,10 +42,19 @@ const Login = () => {
   };
 
   return (
+    
     <div className="min-h-screen w-full bg-linear-to-br from-white via-gray-50 to-blue-50 p-4 sm:p-8 flex flex-col items-center">
       <div className="w-full mx-auto bg-white/95 shadow-2xl overflow-hidden flex-1 md:h-[80vh] flex gap-7 flex-col">
         <Header />
-
+        <div
+      className="min-h-screen p-4 sm:p-8 flex flex-col items-center"
+      style={{
+        backgroundImage: "url('/assets/image.png')",
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
         <main className="py-6 px-6  **:md:px-12 lg:px-16 flex gap-6 md:gap-10 mx-4 md:mx-10 my-6 md:my-10 justify-center flex-1 overflow-auto items-center text-center">
           <div className="border border-gray-200 rounded-lg shadow-md max-w-sm w-full bg-white p-6 md:p-10 flex flex-col justify-center items-center gap-6 md:gap-8">
             <div className="text-center mt-6 pt-2.5">
@@ -122,6 +131,7 @@ const Login = () => {
 
         <Footer />
       </div>
+    </div>
     </div>
   );
 };
