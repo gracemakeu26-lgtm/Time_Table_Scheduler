@@ -389,7 +389,7 @@ const AdminDashboard = () => {
           </div>
 
           {/* Navigation Tabs */}
-          <div className='border-transparent shadow-2xl border-b border-gray-200'>
+          <div className='shadow-2xl border-b border-gray-200'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
               <nav className='flex gap-12 text-sm font-medium'>
                 <button
