@@ -1,9 +1,70 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { DAYS_OF_WEEK, TIME_SLOTS, COURSE_TYPES } from '../../constants';
 
-const TimetableGrid = ({ schedule = [] }) => {
+// Map numeric day (0=Mon) to name from constants
+const dayIndexToName = (idx) => {
+  const names = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday',
+  ];
+  return names[idx] || 'Monday';
+};
+
+// Normalize backend slots -> schedule items the grid understands
+const normalizeSlots = (slots = []) => {
+  return slots.map((slot) => {
+    const dayName =
+      typeof slot.day_of_week === 'number'
+        ? dayIndexToName(slot.day_of_week)
+        : slot.day_of_week || 'Monday';
+    const time = `${slot.start_time} - ${slot.end_time}`;
+    const courseObj = slot.course || {};
+    const teacherObj = courseObj.teacher || slot.teacher || {};
+    const roomObj = slot.room || {};
+    const weekly = courseObj.weekly_sessions;
+    const type = weekly && weekly > 1 ? COURSE_TYPES.LAB : COURSE_TYPES.LECTURE;
+    return {
+      id: slot.id,
+      day: dayName,
+      time,
+      course: courseObj.name || courseObj.code || 'Course',
+      teacher:
+        teacherObj.name ||
+        teacherObj.full_name ||
+        `${teacherObj.first_name || ''} ${teacherObj.last_name || ''}`.trim() ||
+        'TBA',
+      room: roomObj.name || roomObj.code || 'TBA',
+      type,
+    };
+  });
+};
+
+const TimetableGrid = ({ schedule = [], timetable = null, slots = null }) => {
+  const derivedSchedule = useMemo(() => {
+    if (Array.isArray(schedule) && schedule.length > 0) return schedule;
+    const srcSlots = Array.isArray(slots)
+      ? slots
+      : Array.isArray(timetable?.slots)
+      ? timetable.slots
+      : [];
+    return normalizeSlots(srcSlots);
+  }, [schedule, timetable, slots]);
+
+  const displaySlots = useMemo(() => {
+    const times = Array.from(new Set(derivedSchedule.map((c) => c.time)));
+    if (times.length > 0) {
+      return times.sort();
+    }
+    return TIME_SLOTS;
+  }, [derivedSchedule]);
+
   const getCourseForSlot = (day, timeSlot) => {
-    return schedule.find(
+    return derivedSchedule.find(
       (course) => course.day === day && course.time === timeSlot,
     );
   };
@@ -42,7 +103,7 @@ const TimetableGrid = ({ schedule = [] }) => {
 
           {/* Body */}
           <tbody>
-            {TIME_SLOTS.map((timeSlot) => (
+            {displaySlots.map((timeSlot) => (
               <tr key={timeSlot}>
                 <td className='bg-linear-to-r from-gray-200 to-gray-100 p-4 text-center font-bold border-2 border-gray-300 whitespace-nowrap text-gray-800'>
                   {timeSlot}

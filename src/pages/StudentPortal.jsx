@@ -147,29 +147,29 @@ const StudentPortal = () => {
 
   const handleDepartmentSelect = (department) => {
     setSelectedDepartment(department);
-    // When a department is selected, compute available levels (programs)
+    // Compute available levels (programs) from department courses (public endpoint)
     const computeLevelsForDepartment = async () => {
       setLoading(true);
       setError('');
       try {
-        // Fetch courses per level and filter by department
-        const coursesByLevelResponses = await Promise.all(
-          levels.map((lvl) => levelsAPI.getCourses(lvl.id)),
+        const data = await departmentsAPI.getCourses(department.id);
+        const deptCourses = Array.isArray(data?.courses)
+          ? data.courses
+          : Array.isArray(data)
+          ? data
+          : [];
+
+        const levelIdsWithCourses = new Set(
+          deptCourses.map((c) => c.level_id).filter((id) => !!id),
         );
-        const levelsWithDeptCourses = levels.filter((lvl, idx) => {
-          const data = coursesByLevelResponses[idx];
-          const courses = Array.isArray(data?.courses)
-            ? data.courses
-            : Array.isArray(data)
-            ? data
-            : [];
-          return courses.some((c) => c.department_id === department.id);
-        });
+        const levelsWithDeptCourses = levels.filter((lvl) =>
+          levelIdsWithCourses.has(lvl.id),
+        );
         setDeptLevels(levelsWithDeptCourses);
         nextStep();
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to load programs');
-        console.error('Error fetching levels/courses:', err);
+        console.error('Error fetching department courses:', err);
       } finally {
         setLoading(false);
       }

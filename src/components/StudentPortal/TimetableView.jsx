@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Select } from '../common';
-import { DAYS_OF_WEEK, TIME_SLOTS } from '../../constants';
+import { DAYS_OF_WEEK } from '../../constants';
 import CourseDetailModal from './CourseDetailModal';
 import CourseSearch from './CourseSearch';
 import { PrintIcon, DownloadIcon } from '../icons';
@@ -64,6 +64,38 @@ const TimetableView = ({
     });
   }, [timetable]);
 
+  // Derive dynamic days from DB slots (fallback to constants)
+  const displayDays = useMemo(() => {
+    if (!timetable?.slots?.length) return DAYS_OF_WEEK;
+    const dayOrder = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    const daySet = new Set(
+      timetable.slots.map((slot) => DAY_MAP[slot.day_of_week] || 'Monday'),
+    );
+    return Array.from(daySet).sort(
+      (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b),
+    );
+  }, [timetable]);
+
+  // Derive dynamic time rows from DB slots (fallback to constants-like mapping)
+  const displayTimes = useMemo(() => {
+    if (!timetable?.slots?.length) return [];
+    const times = Array.from(
+      new Set(
+        timetable.slots.map((s) => formatTimeSlot(s.start_time, s.end_time)),
+      ),
+    );
+    // Sort by start time
+    return times.sort((a, b) => a.localeCompare(b));
+  }, [timetable]);
+
   // Filter courses based on search term
   const filteredCourses = useMemo(() => {
     if (!searchTerm.trim()) return allCourses;
@@ -125,8 +157,7 @@ const TimetableView = ({
         <div className='flex flex-wrap gap-4'>
           {selectedProgram && (
             <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
-              Program:{' '}
-              <span className='text-blue-600'>{selectedProgram}</span>
+              Program: <span className='text-blue-600'>{selectedProgram}</span>
             </div>
           )}
           <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
@@ -177,7 +208,7 @@ const TimetableView = ({
               <th className='px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-r border-gray-300 w-1/12'>
                 Heure
               </th>
-              {DAYS_OF_WEEK.map((day) => (
+              {displayDays.map((day) => (
                 <th
                   key={day}
                   className='px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider border-r border-gray-300 w-1/5'
@@ -190,12 +221,20 @@ const TimetableView = ({
 
           {/* Body */}
           <tbody>
-            {TIME_SLOTS.map((timeSlot) => (
+            {(displayTimes.length
+              ? displayTimes
+              : [
+                  '08:00 - 10:00',
+                  '10:00 - 12:00',
+                  '13:00 - 15:00',
+                  '15:00 - 17:00',
+                ]
+            ).map((timeSlot) => (
               <tr key={timeSlot} className='hover:bg-blue-50 transition-colors'>
                 <td className='bg-linear-to-r from-gray-200 to-gray-100 p-4 text-center font-bold border-2 border-gray-300 text-gray-800 whitespace-nowrap'>
                   {timeSlot}
                 </td>
-                {DAYS_OF_WEEK.map((day) => {
+                {displayDays.map((day) => {
                   const course = getCourseForSlot(day, timeSlot);
                   const courseId = `${day}-${timeSlot}`;
                   const isFiltered =
