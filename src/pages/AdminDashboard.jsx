@@ -41,6 +41,7 @@ const AdminDashboard = () => {
   const [newTimetable, setNewTimetable] = useState({
     name: '',
     department_id: '',
+    level_id: '',
     week_start: '',
     academic_year: '',
     semester: '',
@@ -138,6 +139,7 @@ const AdminDashboard = () => {
       setNewTimetable({
         name: '',
         department_id: '',
+        level_id: '',
         week_start: '',
         academic_year: '',
         semester: '',
@@ -601,6 +603,23 @@ const AdminDashboard = () => {
                               </option>
                             ))}
                           </select>
+                          <select
+                            value={newTimetable.level_id}
+                            onChange={(e) =>
+                              setNewTimetable({
+                                ...newTimetable,
+                                level_id: e.target.value,
+                              })
+                            }
+                            className='px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-500'
+                          >
+                            <option value=''>Select Level</option>
+                            {levels.map((lvl) => (
+                              <option key={lvl.id} value={lvl.id}>
+                                {lvl.name}
+                              </option>
+                            ))}
+                          </select>
                           <input
                             type='date'
                             placeholder='Week Start *'
@@ -678,6 +697,9 @@ const AdminDashboard = () => {
                                 Department
                               </th>
                               <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                                Level
+                              </th>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
                                 Academic Year
                               </th>
                               <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
@@ -722,6 +744,25 @@ const AdminDashboard = () => {
                                         {departments.map((dept) => (
                                           <option key={dept.id} value={dept.id}>
                                             {dept.name}
+                                          </option>
+                                        ))}
+                                      </select>
+                                    </td>
+                                    <td className='px-6 py-4 text-sm'>
+                                      <select
+                                        value={editTimetableData.level_id || ''}
+                                        onChange={(e) =>
+                                          setEditTimetableData({
+                                            ...editTimetableData,
+                                            level_id: e.target.value,
+                                          })
+                                        }
+                                        className='w-full px-2 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-500'
+                                      >
+                                        <option value=''>None</option>
+                                        {levels.map((lvl) => (
+                                          <option key={lvl.id} value={lvl.id}>
+                                            {lvl.name}
                                           </option>
                                         ))}
                                       </select>
@@ -787,6 +828,13 @@ const AdminDashboard = () => {
                                       {departments.find(
                                         (d) => d.id === item.department_id,
                                       )?.name || 'N/A'}
+                                    </td>
+                                    <td className='px-6 py-4 text-sm text-gray-400'>
+                                      {item.level_name ||
+                                        levels.find(
+                                          (l) => l.id === item.level_id,
+                                        )?.name ||
+                                        'N/A'}
                                     </td>
                                     <td className='px-6 py-4 text-sm text-gray-400'>
                                       {item.academic_year || 'N/A'}
