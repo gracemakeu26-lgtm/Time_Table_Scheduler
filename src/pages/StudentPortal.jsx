@@ -103,6 +103,17 @@ const StudentPortal = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Auto-dismiss error after 35 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError('');
+      }, 35000); // 35 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
   // Fetch departments and levels on mount
   useEffect(() => {
     const fetchData = async () => {

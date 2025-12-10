@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useRef } from 'react';
 import { Select } from '../common';
-import { DAYS_OF_WEEK } from '../../constants';
 import CourseDetailModal from './CourseDetailModal';
 import CourseSearch from './CourseSearch';
 import { PrintIcon, DownloadIcon } from '../icons';
@@ -17,15 +16,30 @@ const DAY_MAP = {
   6: 'Sunday',
 };
 
-// Convert time to time slot format
+// Convert time to time slot format (handles both string and time objects)
 const formatTimeSlot = (startTime, endTime) => {
-  return `${startTime} - ${endTime}`;
+  // If already formatted strings, return as is
+  if (typeof startTime === 'string' && typeof endTime === 'string') {
+    return `${startTime} - ${endTime}`;
+  }
+  // If time objects, format them
+  if (startTime && endTime) {
+    const start =
+      typeof startTime === 'string'
+        ? startTime
+        : startTime.toString().slice(0, 5);
+    const end =
+      typeof endTime === 'string' ? endTime : endTime.toString().slice(0, 5);
+    return `${start} - ${end}`;
+  }
+  return 'TBA';
 };
 
-// Find matching time slot
-const findTimeSlot = (startTime, endTime) => {
-  const slot = formatTimeSlot(startTime, endTime);
-  return TIME_SLOTS.find((ts) => ts === slot) || slot;
+// Parse time string to minutes for sorting
+const timeToMinutes = (timeStr) => {
+  if (!timeStr) return 0;
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + (minutes || 0);
 };
 
 const TimetableView = ({
@@ -46,17 +60,31 @@ const TimetableView = ({
     if (!timetable || !timetable.slots) return [];
 
     return timetable.slots.map((slot) => {
-      const dayName = DAY_MAP[slot.day_of_week] || 'Monday';
-      const timeSlot = findTimeSlot(slot.start_time, slot.end_time);
+      // Use day_name from backend if available, otherwise map from day_of_week
+      const dayName = slot.day_name || DAY_MAP[slot.day_of_week] || 'Monday';
+      const timeSlot = formatTimeSlot(slot.start_time, slot.end_time);
+
+      // Determine course type based on weekly_sessions or course name
+      let courseType = 'Lecture';
+      if (slot.course?.weekly_sessions > 1) {
+        courseType = 'Lab Work';
+      } else if (slot.course?.name?.toLowerCase().includes('tutorial')) {
+        courseType = 'Tutorial';
+      }
 
       return {
         id: slot.id,
-        course: slot.course?.name || 'Unknown Course',
-        teacher: slot.course?.teacher?.name || 'TBA',
-        room: slot.room?.name || 'TBA',
+        course: slot.course_name || slot.course?.name || 'Unknown Course',
+        courseCode: slot.course_code || slot.course?.code || '',
+        teacher: slot.teacher_name || slot.course?.teacher?.name || 'TBA',
+        room: slot.room_name || slot.room?.name || 'TBA',
+        roomType: slot.room_type || slot.room?.room_type || 'classroom',
         day: dayName,
+        dayOfWeek: slot.day_of_week,
         time: timeSlot,
-        type: slot.course?.weekly_sessions > 1 ? 'Lab Work' : 'Lecture',
+        startTime: slot.start_time,
+        endTime: slot.end_time,
+        type: courseType,
         courseData: slot.course,
         roomData: slot.room,
         notes: slot.notes,
@@ -64,9 +92,13 @@ const TimetableView = ({
     });
   }, [timetable]);
 
-  // Derive dynamic days from DB slots (fallback to constants)
+  // Derive dynamic days from DB slots (sorted by day_of_week)
   const displayDays = useMemo(() => {
-    if (!timetable?.slots?.length) return DAYS_OF_WEEK;
+    if (!timetable?.slots?.length) {
+      // Default to weekdays if no slots
+      return ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+    }
+
     const dayOrder = [
       'Monday',
       'Tuesday',
@@ -76,24 +108,43 @@ const TimetableView = ({
       'Saturday',
       'Sunday',
     ];
+
+    // Get unique days from slots
     const daySet = new Set(
-      timetable.slots.map((slot) => DAY_MAP[slot.day_of_week] || 'Monday'),
+      timetable.slots.map(
+        (slot) => slot.day_name || DAY_MAP[slot.day_of_week] || 'Monday',
+      ),
     );
+
+    // Sort by day order
     return Array.from(daySet).sort(
       (a, b) => dayOrder.indexOf(a) - dayOrder.indexOf(b),
     );
   }, [timetable]);
 
-  // Derive dynamic time rows from DB slots (fallback to constants-like mapping)
+  // Derive dynamic time rows from DB slots (sorted by start time)
   const displayTimes = useMemo(() => {
-    if (!timetable?.slots?.length) return [];
-    const times = Array.from(
-      new Set(
-        timetable.slots.map((s) => formatTimeSlot(s.start_time, s.end_time)),
-      ),
+    if (!timetable?.slots?.length) {
+      // Default time slots if no data
+      return [
+        '08:00 - 10:00',
+        '10:00 - 12:00',
+        '13:00 - 15:00',
+        '15:00 - 17:00',
+      ];
+    }
+
+    // Get unique time slots from actual data
+    const timeSet = new Set(
+      timetable.slots.map((s) => formatTimeSlot(s.start_time, s.end_time)),
     );
-    // Sort by start time
-    return times.sort((a, b) => a.localeCompare(b));
+
+    // Sort by start time (convert to minutes for proper sorting)
+    return Array.from(timeSet).sort((a, b) => {
+      const startA = timeToMinutes(a.split(' - ')[0]);
+      const startB = timeToMinutes(b.split(' - ')[0]);
+      return startA - startB;
+    });
   }, [timetable]);
 
   // Filter courses based on search term
@@ -221,15 +272,7 @@ const TimetableView = ({
 
           {/* Body */}
           <tbody>
-            {(displayTimes.length
-              ? displayTimes
-              : [
-                  '08:00 - 10:00',
-                  '10:00 - 12:00',
-                  '13:00 - 15:00',
-                  '15:00 - 17:00',
-                ]
-            ).map((timeSlot) => (
+            {displayTimes.map((timeSlot) => (
               <tr key={timeSlot} className='hover:bg-blue-50 transition-colors'>
                 <td className='bg-linear-to-r from-gray-200 to-gray-100 p-4 text-center font-bold border-2 border-gray-300 text-gray-800 whitespace-nowrap'>
                   {timeSlot}
