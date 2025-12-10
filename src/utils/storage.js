@@ -77,3 +77,8 @@ export const saveSelectionHistory = (selection) => {
 export const getSelectionHistory = () => {
   return getFromStorage('selection_history', []);
 };
+
+/**
+ * Re-export authAPI for convenience
+ */
+export { authAPI } from './api';
