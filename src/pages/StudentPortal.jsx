@@ -202,7 +202,6 @@ const StudentPortal = () => {
         level_id: level.id,
         status: 'published',
         include_slots: true,
-        status: 'published',
         academic_year: selectedAcademicYear || undefined,
         semester: selectedSemester || undefined,
       });
