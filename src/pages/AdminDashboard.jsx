@@ -380,12 +380,20 @@ const AdminDashboard = () => {
                     Manage timetables and schedules
                   </p>
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className='bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition text-sm font-medium'
-                >
-                  Logout
-                </button>
+                <div className='flex items-center gap-4'>
+                  <a
+                    href='/admin/timetable-view'
+                    className='bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-all text-base font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                  >
+                    View Timetables & Clashes
+                  </a>
+                  <button
+                    onClick={handleLogout}
+                    className='bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -561,7 +569,7 @@ const AdminDashboard = () => {
                       </h2>
                       <button
                         onClick={() => setShowAddForm(!showAddForm)}
-                        className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                        className='bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                       >
                         {showAddForm ? 'Cancel' : 'Add New Timetable'}
                       </button>
@@ -673,7 +681,7 @@ const AdminDashboard = () => {
                         </div>
                         <button
                           onClick={handleAddTimetable}
-                          className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                          className='mt-4 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                         >
                           Save
                         </button>
@@ -998,7 +1006,7 @@ const AdminDashboard = () => {
                         </div>
                         <button
                           onClick={handleAddSlot}
-                          className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                          className='mt-4 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                         >
                           Add Slot
                         </button>
@@ -1086,7 +1094,7 @@ const AdminDashboard = () => {
                         onClick={() =>
                           setShowAddDepartmentForm(!showAddDepartmentForm)
                         }
-                        className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                        className='bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                       >
                         {showAddDepartmentForm ? 'Cancel' : 'Add Department'}
                       </button>
@@ -1150,7 +1158,7 @@ const AdminDashboard = () => {
                         </div>
                         <button
                           onClick={handleAddDepartment}
-                          className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                          className='mt-4 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                         >
                           Save
                         </button>

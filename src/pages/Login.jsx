@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Input, Button } from '../components/common';
 import Header from '../components/layout/Header';
@@ -7,11 +7,20 @@ import { BackIcon } from '../components/icons';
 import { useForm } from '../hooks';
 import { validateForm } from '../utils/helpers';
 import { authAPI } from '../utils/api';
+import { getFromStorage } from '../utils/storage';
 
 const Login = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState('');
+
+  // Redirect to admin dashboard if already logged in
+  useEffect(() => {
+    const token = getFromStorage('auth_token');
+    if (token) {
+      navigate('/admin');
+    }
+  }, [navigate]);
 
   const { values, errors, handleChange, handleBlur, setErrors } = useForm({
     identifiant: '',
