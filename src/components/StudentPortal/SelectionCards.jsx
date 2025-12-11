@@ -42,9 +42,6 @@ export const DepartmentCard = ({ department, onSelect }) => (
         <div className='font-semibold text-base text-gray-900 mb-1'>
           {department.name}
         </div>
-        <div className='text-sm text-gray-500'>
-          {department.programs?.length || 0} programmes
-        </div>
       </div>
       <ArrowRightIcon />
     </div>
