@@ -12,7 +12,7 @@ const Home = () => {
     <div
       className='min-h-screen flex flex-col items-center'
       style={{
-        backgroundImage: "url('/assets/image.jpg')",
+        backgroundImage: "url('/bg-university.png')",
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center',

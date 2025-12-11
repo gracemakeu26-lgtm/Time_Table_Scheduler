@@ -498,7 +498,7 @@ const AdminDashboard = () => {
 
                     {/* Recent Timetables */}
                     <div className='bg-white/10 backdrop-blur-3xl rounded-md p-6'>
-                      <h3 className='text-lg font-bold text-blue-600 mb-4'>
+                      <h3 className='text-lg font-bold text-blue-300 mb-4'>
                         Recent Timetables
                       </h3>
                       {timetables.length === 0 ? (
@@ -511,7 +511,7 @@ const AdminDashboard = () => {
                               className='py-4 flex justify-between items-center'
                             >
                               <div>
-                                <div className='font-medium text-blue-600'>
+                                <div className='font-medium text-blue-300'>
                                   {item.name}
                                 </div>
                                 <div className='text-xs text-gray-200'>
@@ -807,22 +807,22 @@ const AdminDashboard = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <td className='px-6 py-4 text-sm text-blue-400 font-medium'>
+                                    <td className='px-6 py-4 text-sm text-blue-300 font-medium'>
                                       {item.name}
                                     </td>
-                                    <td className='px-6 py-4 text-sm text-gray-400'>
+                                    <td className='px-6 py-4 text-sm text-gray-300 '>
                                       {departments.find(
                                         (d) => d.id === item.department_id,
                                       )?.name || 'N/A'}
                                     </td>
-                                    <td className='px-6 py-4 text-sm text-gray-400'>
+                                    <td className='px-6 py-4 text-sm text-gray-300'>
                                       {item.level_name ||
                                         levels.find(
                                           (l) => l.id === item.level_id,
                                         )?.name ||
                                         'N/A'}
                                     </td>
-                                    <td className='px-6 py-4 text-sm text-gray-400'>
+                                    <td className='px-6 py-4 text-sm text-gray-300'>
                                       {item.academic_year || 'N/A'}
                                     </td>
                                     <td className='px-6 py-4 text-sm'>
@@ -843,7 +843,7 @@ const AdminDashboard = () => {
                                         onClick={() =>
                                           handleEditTimetable(item.id)
                                         }
-                                        className='text-blue-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-blue-300 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Edit
                                       </button>
@@ -853,8 +853,8 @@ const AdminDashboard = () => {
                                         }
                                         className={`text-sm font-medium ${
                                           selectedTimetableId === item.id
-                                            ? 'text-green-600'
-                                            : 'text-blue-600'
+                                            ? 'text-green-400'
+                                            : 'text-blue-300'
                                         } hover:text-gray-700`}
                                       >
                                         {selectedTimetableId === item.id
@@ -865,7 +865,7 @@ const AdminDashboard = () => {
                                         onClick={() =>
                                           handleDeleteTimetable(item.id)
                                         }
-                                        className='text-gray-400 hover:text-gray-700 text-sm font-medium'
+                                        className='text-gray-300 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Delete
                                       </button>
@@ -1214,13 +1214,13 @@ const AdminDashboard = () => {
                                     <td className='px-6 py-4 text-sm space-x-2'>
                                       <button
                                         onClick={handleSaveEditDepartment}
-                                        className='text-blue-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-blue-300 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Save
                                       </button>
                                       <button
                                         onClick={handleCancelEditDepartment}
-                                        className='text-gray-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-gray-300 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Cancel
                                       </button>
@@ -1228,13 +1228,13 @@ const AdminDashboard = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <td className='px-6 py-4 text-sm text-blue-600 font-medium'>
+                                    <td className='px-6 py-4 text-sm text-blue-300 font-medium'>
                                       {item.name}
                                     </td>
-                                    <td className='px-6 py-4 text-sm text-gray-400'>
+                                    <td className='px-6 py-4 text-sm text-gray-300'>
                                       {item.code || 'N/A'}
                                     </td>
-                                    <td className='px-6 py-4 text-sm text-gray-400'>
+                                    <td className='px-6 py-4 text-sm font-semibold text-gray-300'>
                                       {item.head || 'N/A'}
                                     </td>
                                     <td className='px-6 py-4 text-sm space-x-4'>
@@ -1242,7 +1242,7 @@ const AdminDashboard = () => {
                                         onClick={() =>
                                           handleEditDepartment(item.id)
                                         }
-                                        className='text-blue-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-blue-300 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Edit
                                       </button>
@@ -1250,7 +1250,7 @@ const AdminDashboard = () => {
                                         onClick={() =>
                                           handleDeleteDepartment(item.id)
                                         }
-                                        className='text-gray-400 hover:text-gray-700 text-sm font-medium'
+                                        className='text-gray-300 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Delete
                                       </button>
