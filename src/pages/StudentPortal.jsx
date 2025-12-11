@@ -323,13 +323,23 @@ const StudentPortal = () => {
             {/* Step 1: Faculties */}
             {currentStep === 1 && (
               <div className='grid grid-cols-2 md:grid-cols-3 gap-7'>
-                {faculties.map((faculty) => (
-                  <FacultyCard
-                    key={faculty.id}
-                    faculty={faculty}
-                    onSelect={handleFacultySelect}
-                  />
-                ))}
+                {loading ? (
+                  <div className='text-center py-12'>
+                    <p className='text-gray-600'>Loading faculties...</p>
+                  </div>
+                ) : faculties.length === 0 ? (
+                  <div className='text-center py-12'>
+                    <p className='text-gray-600'>No faculties found.</p>
+                  </div>
+                ) : (
+                  faculties.map((faculty) => (
+                    <FacultyCard
+                      key={faculty.id}
+                      faculty={faculty}
+                      onSelect={handleFacultySelect}
+                    />
+                  ))
+                )}
               </div>
             )}
 
@@ -338,7 +348,7 @@ const StudentPortal = () => {
               <div>
                 {loading ? (
                   <div className='text-center py-12'>
-                    <p className='text-gray-600'>Loading departments...</p>
+                    <p className='text-gray-600'>Loading programs...</p>
                   </div>
                 ) : availableDepartments.length === 0 ? (
                   <div className='text-center py-12'>
@@ -396,11 +406,11 @@ const StudentPortal = () => {
                 </div>
                 {loading ? (
                   <div className='text-center py-12'>
-                    <p className='text-gray-600'>Loading programs...</p>
+                    <p className='text-gray-600'>Loading timetables...</p>
                   </div>
                 ) : deptLevels.length === 0 ? (
                   <div className='text-center py-12'>
-                    <p className='text-gray-600'>No programs available.</p>
+                    <p className='text-gray-600'>No timetables available.</p>
                   </div>
                 ) : (
                   <div className='grid grid-cols-2 md:grid-cols-3 gap-6'>
