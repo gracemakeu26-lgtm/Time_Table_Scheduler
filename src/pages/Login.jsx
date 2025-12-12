@@ -61,15 +61,15 @@ const Login = () => {
 
   return (
     <div
-      className='min-h-screen flex flex-col items-center pt-22'
-      style={{
+        className='min-h-screen flex flex-col items-center pt-22'
+        style={{
         backgroundImage: "url('/assets/background.jpg')",
         backgroundRepeat: 'no-repeat',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
-      {/* <div className="min-h-screen flex flex-col items-center pt-22"> */}
+    {/* <div className="min-h-screen flex flex-col items-center pt-22"> */}
       {/* full-bleed header */}
       <Header />
 
