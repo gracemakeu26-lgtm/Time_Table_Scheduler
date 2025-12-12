@@ -745,7 +745,7 @@ const AdminDashboard = () => {
         <main className='grow w-full'>
           {/* Dashboard Header */}
           <div className='shadow-2xl w-full bg-white rounded-xs border-b border-gray-200'>
-            <div className='emakeu26-lgtmmax-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
               <div className='flex justify-between items-center'>
                 <div>
                   <h1 className='pt-3 text-3xl font-bold text-gray-900'>
@@ -766,7 +766,6 @@ const AdminDashboard = () => {
               </div>
             </div>
           </div>
-        </div>
 
           {/* Navigation Tabs */}
           <div className='sticky top-0 z-40 shadow-lg w-full bg-white border-b border-gray-200'>
