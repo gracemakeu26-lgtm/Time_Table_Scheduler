@@ -7,7 +7,6 @@ import {
   NotFound,
   Loading,
   AdminDashboard,
-  AdminTimetableView,
 } from './pages';
 
 function App() {
@@ -21,10 +20,6 @@ function App() {
             <Route path='/student' element={<StudentPortal />} />
             <Route path='/login' element={<Login />} />
             <Route path='/admin' element={<AdminDashboard />} />
-            <Route
-              path='/admin/timetable-view'
-              element={<AdminTimetableView />}
-            />
             <Route path='*' element={<NotFound />} />
           </Routes>
         </main>
