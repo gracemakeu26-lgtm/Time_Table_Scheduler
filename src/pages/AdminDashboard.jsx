@@ -714,10 +714,10 @@ const AdminDashboard = () => {
 
   return (
     <div className='min-h-screen bg-linear-to-br from-gray-50 via-gray-100 to-gray-200 flex flex-col'>
-      <div className='min-h-screen flex flex-col items-center pt-22'>
+      <div className='min-h-screen flex flex-col items-center'>
         <main className='grow w-full'>
           {/* Dashboard Header */}
-          <div className='shadow-2xl w-full mt-4 bg-white rounded-xs border-b border-gray-200'>
+          <div className='shadow-2xl w-full bg-white rounded-xs border-b border-gray-200'>
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
               <div className='flex justify-between items-center'>
                 <div>
