@@ -1,6 +1,13 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Home, StudentPortal, Login, NotFound, Loading, AdminDashboard } from './pages';
+import {
+  Home,
+  StudentPortal,
+  Login,
+  NotFound,
+  Loading,
+  AdminDashboard,
+} from './pages';
 
 function App() {
   return (

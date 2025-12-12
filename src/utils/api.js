@@ -38,16 +38,18 @@ api.interceptors.response.use(
       // Unauthorized - only redirect to login if we're on an admin page
       // Public pages (like /student) should handle 401 errors gracefully
       const currentPath = window.location.pathname;
-      const isAdminPage =
-        currentPath.startsWith('/admin') || currentPath === '/login';
+      const isAdminPage = currentPath.startsWith('/admin');
+      const isLoginPage = currentPath === '/login';
 
-      if (isAdminPage) {
+      // Only redirect if we're on an admin page (not login page, not public pages)
+      if (isAdminPage && !isLoginPage) {
         // Clear token and redirect to login only for admin pages
         removeFromStorage('auth_token');
         removeFromStorage('admin');
         window.location.href = '/login';
       }
-      // For public pages, just let the error propagate so components can handle it
+      // For public pages (/student, /, etc.) and login page, just let the error propagate
+      // so components can handle it without logging out
     }
     return Promise.reject(error);
   },

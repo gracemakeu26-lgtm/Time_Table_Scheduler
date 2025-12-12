@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { getFromStorage } from '../utils/storage';
 import {
@@ -13,6 +12,32 @@ import {
   teachersAPI,
   levelsAPI,
 } from '../utils/api';
+
+// Map day numbers to day names
+const DAY_MAP = {
+  0: 'Monday',
+  1: 'Tuesday',
+  2: 'Wednesday',
+  3: 'Thursday',
+  4: 'Friday',
+  5: 'Saturday',
+  6: 'Sunday',
+};
+
+// Parse time string to minutes for sorting
+const timeToMinutes = (timeStr) => {
+  if (!timeStr) return 0;
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 60 + (minutes || 0);
+};
+
+// Format time slot
+const formatTimeSlot = (startTime, endTime) => {
+  if (typeof startTime === 'string' && typeof endTime === 'string') {
+    return `${startTime} - ${endTime}`;
+  }
+  return `${startTime} - ${endTime}`;
+};
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -59,6 +84,16 @@ const AdminDashboard = () => {
   const [editTimetableData, setEditTimetableData] = useState({});
   const [editDepartmentData, setEditDepartmentData] = useState({});
 
+  // Timetable View Filters
+  const [selectedSemester, setSelectedSemester] = useState('');
+  const [selectedYear, setSelectedYear] = useState('');
+  const [selectedDepartmentView, setSelectedDepartmentView] = useState('');
+  const [selectedLevelView, setSelectedLevelView] = useState('');
+  const [viewMode, setViewMode] = useState('level'); // 'level', 'department', 'room'
+  const [timetablesWithSlots, setTimetablesWithSlots] = useState([]);
+  const [loadingTimetablesWithSlots, setLoadingTimetablesWithSlots] =
+    useState(false);
+
   // Check authentication on mount
   useEffect(() => {
     const token = getFromStorage('auth_token');
@@ -67,51 +102,54 @@ const AdminDashboard = () => {
     }
   }, [navigate]);
 
-  // Fetch data on mount and when tab changes
+  // Fetch essential data first (fast - without slots)
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchEssentialData = async () => {
       setLoading(true);
       setError('');
       try {
-        if (activeTab === 'timetables' || activeTab === 'overview') {
-          const timetablesData = await timetablesAPI.getAll({
-            include_slots: false,
-          });
-          setTimetables(
-            Array.isArray(timetablesData)
-              ? timetablesData
-              : timetablesData.data || [],
-          );
-        }
-        if (activeTab === 'faculty' || activeTab === 'overview') {
-          const departmentsData = await departmentsAPI.getAll();
-          setDepartments(
-            Array.isArray(departmentsData)
-              ? departmentsData
-              : departmentsData.data || [],
-          );
-        }
-        if (activeTab === 'timetables') {
-          const [levelsData, coursesData, roomsData, teachersData] =
-            await Promise.all([
-              levelsAPI.getAll({ active_only: true }),
-              coursesAPI.getAll(),
-              roomsAPI.getAll(),
-              teachersAPI.getAll(),
-            ]);
-          setLevels(
-            Array.isArray(levelsData) ? levelsData : levelsData.data || [],
-          );
-          setCourses(
-            Array.isArray(coursesData) ? coursesData : coursesData.data || [],
-          );
-          setRooms(Array.isArray(roomsData) ? roomsData : roomsData.data || []);
-          setTeachers(
-            Array.isArray(teachersData)
-              ? teachersData
-              : teachersData.data || [],
-          );
-        }
+        // Fetch essential data in parallel (without slots - much faster)
+        const [
+          timetablesData,
+          departmentsData,
+          levelsData,
+          coursesData,
+          roomsData,
+          teachersData,
+        ] = await Promise.all([
+          timetablesAPI.getAll({ include_slots: false }),
+          departmentsAPI.getAll(),
+          levelsAPI.getAll({ active_only: true }),
+          coursesAPI.getAll(),
+          roomsAPI.getAll(),
+          teachersAPI.getAll(),
+        ]);
+
+        // Set timetables without slots
+        setTimetables(
+          Array.isArray(timetablesData)
+            ? timetablesData
+            : timetablesData.data || [],
+        );
+
+        // Set departments
+        setDepartments(
+          Array.isArray(departmentsData)
+            ? departmentsData
+            : departmentsData.data || [],
+        );
+
+        // Set levels, courses, rooms, teachers
+        setLevels(
+          Array.isArray(levelsData) ? levelsData : levelsData.data || [],
+        );
+        setCourses(
+          Array.isArray(coursesData) ? coursesData : coursesData.data || [],
+        );
+        setRooms(Array.isArray(roomsData) ? roomsData : roomsData.data || []);
+        setTeachers(
+          Array.isArray(teachersData) ? teachersData : teachersData.data || [],
+        );
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to load data');
         console.error('Error fetching data:', err);
@@ -120,8 +158,40 @@ const AdminDashboard = () => {
       }
     };
 
-    fetchData();
-  }, [activeTab]);
+    fetchEssentialData();
+  }, []); // Empty dependency array - fetch only once on mount
+
+  // Fetch timetables with slots in background (lazy load - only when needed)
+  useEffect(() => {
+    // Only fetch if timetablesWithSlots is empty and not currently loading
+    if (timetablesWithSlots.length === 0 && !loadingTimetablesWithSlots) {
+      const fetchTimetablesWithSlots = async () => {
+        setLoadingTimetablesWithSlots(true);
+        try {
+          const timetablesWithSlotsData = await timetablesAPI.getAll({
+            include_slots: true,
+          });
+          setTimetablesWithSlots(
+            Array.isArray(timetablesWithSlotsData)
+              ? timetablesWithSlotsData
+              : timetablesWithSlotsData.data || [],
+          );
+        } catch (err) {
+          console.error('Error fetching timetables with slots:', err);
+          // Don't set error here, just log it - this is background loading
+        } finally {
+          setLoadingTimetablesWithSlots(false);
+        }
+      };
+
+      // Fetch in background after initial render (non-blocking)
+      const timer = setTimeout(() => {
+        fetchTimetablesWithSlots();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [timetablesWithSlots.length, loadingTimetablesWithSlots]);
 
   // Timetable Functions
   const handleAddTimetable = async () => {
@@ -354,38 +424,360 @@ const AdminDashboard = () => {
     draftTimetables: timetables.filter((t) => t.status === 'draft').length,
   };
 
-  return (
-    <div className='min-h-screen bg-gray-50 flex flex-col'>
-      <Header />
+  // Timetable View Logic
+  const availableSemesters = useMemo(() => {
+    if (!timetablesWithSlots || timetablesWithSlots.length === 0) return [];
+    const semesters = new Set();
+    timetablesWithSlots.forEach((tt) => {
+      if (tt && tt.semester) semesters.add(tt.semester);
+    });
+    return Array.from(semesters).sort();
+  }, [timetablesWithSlots]);
 
-      <div
-        className='min-h-screen flex flex-col items-center pt-22'
-        style={{
-        backgroundImage: "url('background.jpg')",
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    > 
-      <main className='flex-grow'>
-        {/* Dashboard Header */}
-        <div className='shadow-2xl w-full mt-4 bg-white rounded-xs border-b border-gray-200'>
-          <div className='max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8 py-8'>
-            <h1 className=' pt-3  text-3xl font-bold text-blue-600'>Administration Dashboard</h1>
-            <p className='text-gray-600 text-sm mt-1'>Manage timetables and schedules</p>
+  const availableYears = useMemo(() => {
+    if (!timetablesWithSlots || timetablesWithSlots.length === 0) return [];
+    const years = new Set();
+    timetablesWithSlots.forEach((tt) => {
+      if (tt && tt.academic_year) years.add(tt.academic_year);
+    });
+    return Array.from(years).sort();
+  }, [timetablesWithSlots]);
+
+  const filteredTimetables = useMemo(() => {
+    if (!timetablesWithSlots || timetablesWithSlots.length === 0) return [];
+    try {
+      return timetablesWithSlots.filter((tt) => {
+        if (!tt) return false;
+        if (selectedSemester && selectedSemester !== '') {
+          if (!tt.semester || tt.semester !== selectedSemester) return false;
+        }
+        if (selectedYear && selectedYear !== '') {
+          if (!tt.academic_year || tt.academic_year !== selectedYear)
+            return false;
+        }
+        if (selectedDepartmentView && selectedDepartmentView !== '') {
+          const deptId = parseInt(selectedDepartmentView, 10);
+          if (isNaN(deptId) || !tt.department_id || tt.department_id !== deptId)
+            return false;
+        }
+        if (selectedLevelView && selectedLevelView !== '') {
+          const levelId = parseInt(selectedLevelView, 10);
+          if (isNaN(levelId)) return false;
+          if (tt.level_id === null || tt.level_id === undefined) return false;
+          if (tt.level_id !== levelId) return false;
+        }
+        return true;
+      });
+    } catch (error) {
+      console.error('Error filtering timetables:', error);
+      return [];
+    }
+  }, [
+    timetablesWithSlots,
+    selectedSemester,
+    selectedYear,
+    selectedDepartmentView,
+    selectedLevelView,
+  ]);
+
+  const allSlots = useMemo(() => {
+    if (!filteredTimetables || filteredTimetables.length === 0) return [];
+    const slots = [];
+    filteredTimetables.forEach((tt) => {
+      if (!tt) return;
+      if (tt.slots && Array.isArray(tt.slots)) {
+        tt.slots.forEach((slot) => {
+          if (!slot) return;
+          slots.push({
+            ...slot,
+            timetable_name: tt.name || 'Unknown Timetable',
+            department_name: tt.department_name || 'Unknown Department',
+            level_name: tt.level_name || null,
+            level_code: (tt.level && tt.level.code) || slot.level_code || '',
+            semester: tt.semester || null,
+            academic_year: tt.academic_year || null,
+          });
+        });
+      }
+    });
+    return slots;
+  }, [filteredTimetables]);
+
+  const clashes = useMemo(() => {
+    if (!allSlots || allSlots.length === 0) return [];
+    const clashList = [];
+    const roomDaySlots = new Map();
+    allSlots.forEach((slot) => {
+      if (
+        !slot ||
+        slot.room_id === null ||
+        slot.room_id === undefined ||
+        slot.day_of_week === null ||
+        slot.day_of_week === undefined
+      )
+        return;
+      const key = `${slot.room_id}-${slot.day_of_week}`;
+      if (!roomDaySlots.has(key)) {
+        roomDaySlots.set(key, []);
+      }
+      roomDaySlots.get(key).push(slot);
+    });
+
+    roomDaySlots.forEach((slots) => {
+      for (let i = 0; i < slots.length; i++) {
+        for (let j = i + 1; j < slots.length; j++) {
+          const slot1 = slots[i];
+          const slot2 = slots[j];
+          if (
+            !slot1 ||
+            !slot2 ||
+            !slot1.start_time ||
+            !slot1.end_time ||
+            !slot2.start_time ||
+            !slot2.end_time
+          )
+            continue;
+          const start1 = timeToMinutes(slot1.start_time);
+          const end1 = timeToMinutes(slot1.end_time);
+          const start2 = timeToMinutes(slot2.start_time);
+          const end2 = timeToMinutes(slot2.end_time);
+          if (start1 < end2 && end1 > start2) {
+            clashList.push({
+              type: 'room',
+              slot1,
+              slot2,
+              room_name: slot1.room_name || 'Unknown Room',
+              room_id: slot1.room_id,
+              day: DAY_MAP[slot1.day_of_week],
+              day_of_week: slot1.day_of_week,
+              time_slot1: formatTimeSlot(slot1.start_time, slot1.end_time),
+              time_slot2: formatTimeSlot(slot2.start_time, slot2.end_time),
+              department1: slot1.department_name || 'Unknown Department',
+              department2: slot2.department_name || 'Unknown Department',
+              level1: slot1.level_name || slot1.level_code || 'Unknown Level',
+              level2: slot2.level_name || slot2.level_code || 'Unknown Level',
+              course1:
+                slot1.course_name || slot1.course?.name || 'Unknown Course',
+              course2:
+                slot2.course_name || slot2.course?.name || 'Unknown Course',
+              course_code1: slot1.course_code || slot1.course?.code || '',
+              course_code2: slot2.course_code || slot2.course?.code || '',
+              teacher1: slot1.teacher_name || 'TBA',
+              teacher2: slot2.teacher_name || 'TBA',
+              timetable1: slot1.timetable_name || 'Unknown Timetable',
+              timetable2: slot2.timetable_name || 'Unknown Timetable',
+              semester1: slot1.semester || 'Unknown',
+              semester2: slot2.semester || 'Unknown',
+              academic_year1: slot1.academic_year || 'Unknown',
+              academic_year2: slot2.academic_year || 'Unknown',
+            });
+          }
+        }
+      }
+    });
+
+    const teacherDaySlots = new Map();
+    allSlots.forEach((slot) => {
+      if (!slot || slot.day_of_week === null || slot.day_of_week === undefined)
+        return;
+      if (slot.teacher_id || slot.teacher_name) {
+        const teacherId = slot.teacher_id || slot.teacher_name;
+        if (!teacherId) return;
+        const key = `${teacherId}-${slot.day_of_week}`;
+        if (!teacherDaySlots.has(key)) {
+          teacherDaySlots.set(key, []);
+        }
+        teacherDaySlots.get(key).push(slot);
+      }
+    });
+
+    teacherDaySlots.forEach((slots) => {
+      for (let i = 0; i < slots.length; i++) {
+        for (let j = i + 1; j < slots.length; j++) {
+          const slot1 = slots[i];
+          const slot2 = slots[j];
+          if (
+            !slot1 ||
+            !slot2 ||
+            !slot1.start_time ||
+            !slot1.end_time ||
+            !slot2.start_time ||
+            !slot2.end_time
+          )
+            continue;
+          const start1 = timeToMinutes(slot1.start_time);
+          const end1 = timeToMinutes(slot1.end_time);
+          const start2 = timeToMinutes(slot2.start_time);
+          const end2 = timeToMinutes(slot2.end_time);
+          if (start1 < end2 && end1 > start2) {
+            clashList.push({
+              type: 'teacher',
+              slot1,
+              slot2,
+              teacher_name: slot1.teacher_name || 'Unknown Teacher',
+              teacher_id: slot1.teacher_id,
+              day: DAY_MAP[slot1.day_of_week],
+              day_of_week: slot1.day_of_week,
+              time_slot1: formatTimeSlot(slot1.start_time, slot1.end_time),
+              time_slot2: formatTimeSlot(slot2.start_time, slot2.end_time),
+              department1: slot1.department_name || 'Unknown Department',
+              department2: slot2.department_name || 'Unknown Department',
+              level1: slot1.level_name || slot1.level_code || 'Unknown Level',
+              level2: slot2.level_name || slot2.level_code || 'Unknown Level',
+              course1:
+                slot1.course_name || slot1.course?.name || 'Unknown Course',
+              course2:
+                slot2.course_name || slot2.course?.name || 'Unknown Course',
+              course_code1: slot1.course_code || slot1.course?.code || '',
+              course_code2: slot2.course_code || slot2.course?.code || '',
+              room1: slot1.room_name || 'Unknown Room',
+              room2: slot2.room_name || 'Unknown Room',
+              timetable1: slot1.timetable_name || 'Unknown Timetable',
+              timetable2: slot2.timetable_name || 'Unknown Timetable',
+              semester1: slot1.semester || 'Unknown',
+              semester2: slot2.semester || 'Unknown',
+              academic_year1: slot1.academic_year || 'Unknown',
+              academic_year2: slot2.academic_year || 'Unknown',
+            });
+          }
+        }
+      }
+    });
+
+    return clashList;
+  }, [allSlots]);
+
+  const groupedSlots = useMemo(() => {
+    if (!allSlots || allSlots.length === 0) return new Map();
+    const groups = new Map();
+    if (viewMode === 'level') {
+      allSlots.forEach((slot) => {
+        if (!slot) return;
+        const key = slot.level_code || slot.level_name || 'Unknown';
+        if (!groups.has(key)) {
+          groups.set(key, []);
+        }
+        groups.get(key).push(slot);
+      });
+    } else if (viewMode === 'department') {
+      allSlots.forEach((slot) => {
+        if (!slot) return;
+        const key = slot.department_name || 'Unknown';
+        if (!groups.has(key)) {
+          groups.set(key, []);
+        }
+        groups.get(key).push(slot);
+      });
+    } else if (viewMode === 'room') {
+      allSlots.forEach((slot) => {
+        if (!slot) return;
+        const key = slot.room_name || 'Unknown';
+        if (!groups.has(key)) {
+          groups.set(key, []);
+        }
+        groups.get(key).push(slot);
+      });
+    }
+    groups.forEach((slots) => {
+      slots.sort((a, b) => {
+        if (!a || !b) return 0;
+        if (a.day_of_week !== b.day_of_week) {
+          return (a.day_of_week || 0) - (b.day_of_week || 0);
+        }
+        const timeA = a.start_time ? timeToMinutes(a.start_time) : 0;
+        const timeB = b.start_time ? timeToMinutes(b.start_time) : 0;
+        return timeA - timeB;
+      });
+    });
+    return groups;
+  }, [allSlots, viewMode]);
+
+  const hasClash = (slot) => {
+    if (!slot || !slot.id || !clashes || clashes.length === 0) return false;
+    return clashes.some(
+      (clash) =>
+        (clash.slot1 && clash.slot1.id === slot.id) ||
+        (clash.slot2 && clash.slot2.id === slot.id),
+    );
+  };
+
+  const getClashDetails = (slot) => {
+    if (!slot || !slot.id || !clashes || clashes.length === 0) return [];
+    return clashes.filter(
+      (clash) =>
+        (clash.slot1 && clash.slot1.id === slot.id) ||
+        (clash.slot2 && clash.slot2.id === slot.id),
+    );
+  };
+
+  const displayDays = useMemo(() => {
+    if (!allSlots || allSlots.length === 0) return [];
+    const days = new Set();
+    allSlots.forEach((slot) => {
+      if (slot && slot.day_of_week !== null && slot.day_of_week !== undefined) {
+        days.add(slot.day_of_week);
+      }
+    });
+    return Array.from(days).sort();
+  }, [allSlots]);
+
+  const displayTimes = useMemo(() => {
+    if (!allSlots || allSlots.length === 0) return [];
+    const times = new Set();
+    allSlots.forEach((slot) => {
+      if (slot && slot.start_time && slot.end_time) {
+        const timeSlot = formatTimeSlot(slot.start_time, slot.end_time);
+        if (timeSlot && timeSlot !== 'TBA') {
+          times.add(timeSlot);
+        }
+      }
+    });
+    return Array.from(times).sort((a, b) => {
+      const timeA = a.split(' - ')[0];
+      const timeB = b.split(' - ')[0];
+      return timeToMinutes(timeA) - timeToMinutes(timeB);
+    });
+  }, [allSlots]);
+
+  return (
+    <div className='min-h-screen bg-linear-to-br from-gray-50 via-gray-100 to-gray-200 flex flex-col'>
+      <div className='min-h-screen flex flex-col items-center'>
+        <main className='grow w-full'>
+          {/* Dashboard Header */}
+          <div className='shadow-2xl w-full bg-white rounded-xs border-b border-gray-200'>
+            <div className='emakeu26-lgtmmax-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+              <div className='flex justify-between items-center'>
+                <div>
+                  <h1 className='pt-3 text-3xl font-bold text-gray-900'>
+                    Administration Dashboard
+                  </h1>
+                  <p className='text-gray-600 text-sm mt-1'>
+                    Manage timetables and schedules
+                  </p>
+                </div>
+                <div className='flex items-center gap-4'>
+                  <button
+                    onClick={handleLogout}
+                    className='bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
           {/* Navigation Tabs */}
-          <div className='shadow-2xl border-b border-gray-200'>
-            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-              <nav className='flex gap-12 text-sm font-medium'>
+          <div className='sticky top-0 z-40 shadow-lg w-full bg-white border-b border-gray-200'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-2'>
+              <nav className='flex gap-12 text-sm font-medium bg-white'>
                 <button
                   onClick={() => setActiveTab('overview')}
                   className={`py-4 border-b-2 transition ${
                     activeTab === 'overview'
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-300 hover:text-gray-700 hover:-translate-y-1'
+                      ? 'border-gray-900 text-gray-900 font-semibold'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:-translate-y-1'
                   }`}
                 >
                   Overview
@@ -394,8 +786,8 @@ const AdminDashboard = () => {
                   onClick={() => setActiveTab('timetables')}
                   className={`py-4 border-b-2 transition ${
                     activeTab === 'timetables'
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-300 hover:text-gray-700 hover:-translate-y-1'
+                      ? 'border-gray-900 text-gray-900 font-semibold'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:-translate-y-1'
                   }`}
                 >
                   Timetables
@@ -404,18 +796,28 @@ const AdminDashboard = () => {
                   onClick={() => setActiveTab('faculty')}
                   className={`py-4 border-b-2 transition ${
                     activeTab === 'faculty'
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-300 hover:text-gray-700 hover:-translate-y-1'
+                      ? 'border-gray-900 text-gray-900 font-semibold'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:-translate-y-1'
                   }`}
                 >
                   Departments
                 </button>
                 <button
+                  onClick={() => setActiveTab('timetable-view')}
+                  className={`py-4 border-b-2 transition ${
+                    activeTab === 'timetable-view'
+                      ? 'border-gray-900 text-gray-900 font-semibold'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:-translate-y-1'
+                  }`}
+                >
+                  Timetable View
+                </button>
+                <button
                   onClick={() => setActiveTab('settings')}
                   className={`py-4 border-b-2 transition ${
                     activeTab === 'settings'
-                      ? 'border-blue-600 text-blue-600'
-                      : 'border-transparent text-gray-300 hover:text-gray-700 hover:-translate-y-1'
+                      ? 'border-gray-900 text-gray-900 font-semibold'
+                      : 'border-transparent text-gray-600 hover:text-gray-900 hover:-translate-y-1'
                   }`}
                 >
                   Settings
@@ -444,7 +846,7 @@ const AdminDashboard = () => {
                 {/* Overview Tab */}
                 {activeTab === 'overview' && (
                   <div>
-                    <h2 className='text-xl font-bold text-blue-600 mb-6'>
+                    <h2 className='text-xl font-bold text-gray-900 mb-6'>
                       Dashboard Overview
                     </h2>
 
@@ -498,7 +900,7 @@ const AdminDashboard = () => {
 
                     {/* Recent Timetables */}
                     <div className='bg-white/10 backdrop-blur-3xl rounded-md p-6'>
-                      <h3 className='text-lg font-bold text-blue-600 mb-4'>
+                      <h3 className='text-lg font-bold text-gray-900 mb-4'>
                         Recent Timetables
                       </h3>
                       {timetables.length === 0 ? (
@@ -511,7 +913,7 @@ const AdminDashboard = () => {
                               className='py-4 flex justify-between items-center'
                             >
                               <div>
-                                <div className='font-medium text-blue-600'>
+                                <div className='font-medium text-gray-900'>
                                   {item.name}
                                 </div>
                                 <div className='text-xs text-gray-200'>
@@ -542,12 +944,12 @@ const AdminDashboard = () => {
                 {activeTab === 'timetables' && (
                   <div>
                     <div className='flex justify-between items-center mb-6'>
-                      <h2 className='text-xl font-bold text-blue-600'>
+                      <h2 className='text-xl font-bold text-gray-900'>
                         Manage Timetables
                       </h2>
                       <button
                         onClick={() => setShowAddForm(!showAddForm)}
-                        className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                        className='bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                       >
                         {showAddForm ? 'Cancel' : 'Add New Timetable'}
                       </button>
@@ -556,7 +958,7 @@ const AdminDashboard = () => {
                     {/* Add Form */}
                     {showAddForm && (
                       <div className='bg-white rounded-md border border-gray-200 p-6 mb-6'>
-                        <h3 className='text-base font-semibold text-blue-600 mb-4'>
+                        <h3 className='text-base font-semibold text-gray-900 mb-4'>
                           New Timetable
                         </h3>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -659,7 +1061,7 @@ const AdminDashboard = () => {
                         </div>
                         <button
                           onClick={handleAddTimetable}
-                          className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                          className='mt-4 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                         >
                           Save
                         </button>
@@ -676,22 +1078,22 @@ const AdminDashboard = () => {
                         <table className='w-full'>
                           <thead className='bg-gray-50 border-b'>
                             <tr>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Name
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Department
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Level
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Academic Year
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Status
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Actions
                               </th>
                             </tr>
@@ -793,7 +1195,7 @@ const AdminDashboard = () => {
                                     <td className='px-6 py-4 text-sm space-x-2'>
                                       <button
                                         onClick={handleSaveEditTimetable}
-                                        className='text-blue-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-gray-900 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Save
                                       </button>
@@ -807,7 +1209,7 @@ const AdminDashboard = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <td className='px-6 py-4 text-sm text-blue-400 font-medium'>
+                                    <td className='px-6 py-4 text-sm text-gray-900 font-medium'>
                                       {item.name}
                                     </td>
                                     <td className='px-6 py-4 text-sm text-gray-400'>
@@ -843,7 +1245,7 @@ const AdminDashboard = () => {
                                         onClick={() =>
                                           handleEditTimetable(item.id)
                                         }
-                                        className='text-blue-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-gray-900 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Edit
                                       </button>
@@ -882,7 +1284,7 @@ const AdminDashboard = () => {
                     {/* Slots Management Panel */}
                     {selectedTimetableId && (
                       <div className='mt-8 bg-white rounded-md border border-gray-200 p-6'>
-                        <h3 className='text-base font-semibold text-blue-600 mb-4'>
+                        <h3 className='text-base font-semibold text-gray-900 mb-4'>
                           Manage Slots for Timetable #{selectedTimetableId}
                         </h3>
                         <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
@@ -984,7 +1386,7 @@ const AdminDashboard = () => {
                         </div>
                         <button
                           onClick={handleAddSlot}
-                          className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                          className='mt-4 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                         >
                           Add Slot
                         </button>
@@ -999,22 +1401,22 @@ const AdminDashboard = () => {
                             <table className='w-full'>
                               <thead className='bg-gray-50 border-b'>
                                 <tr>
-                                  <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                                  <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                     Day
                                   </th>
-                                  <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                                  <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                     Time
                                   </th>
-                                  <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                                  <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                     Course
                                   </th>
-                                  <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                                  <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                     Room
                                   </th>
-                                  <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                                  <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                     Teacher
                                   </th>
-                                  <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                                  <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                     Actions
                                   </th>
                                 </tr>
@@ -1022,7 +1424,7 @@ const AdminDashboard = () => {
                               <tbody className='divide-y'>
                                 {slots.map((s) => (
                                   <tr key={s.id} className='hover:bg-gray-50'>
-                                    <td className='px-6 py-4 text-sm text-blue-600 font-medium'>
+                                    <td className='px-6 py-4 text-sm text-gray-900 font-medium'>
                                       {s.day_of_week}
                                     </td>
                                     <td className='px-6 py-4 text-sm text-gray-600'>
@@ -1040,7 +1442,7 @@ const AdminDashboard = () => {
                                         'N/A'}
                                     </td>
                                     <td className='px-6 py-4 text-sm space-x-4'>
-                                      <button className='text-blue-600 hover:text-gray-700 text-sm font-medium'>
+                                      <button className='text-gray-900 hover:text-gray-700 text-sm font-medium'>
                                         Edit
                                       </button>
                                       <button
@@ -1065,14 +1467,14 @@ const AdminDashboard = () => {
                 {activeTab === 'faculty' && (
                   <div>
                     <div className='flex justify-between items-center mb-6'>
-                      <h2 className='text-xl font-bold text-blue-600'>
+                      <h2 className='text-xl font-bold text-gray-900'>
                         Departments
                       </h2>
                       <button
                         onClick={() =>
                           setShowAddDepartmentForm(!showAddDepartmentForm)
                         }
-                        className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                        className='bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                       >
                         {showAddDepartmentForm ? 'Cancel' : 'Add Department'}
                       </button>
@@ -1081,7 +1483,7 @@ const AdminDashboard = () => {
                     {/* Add Department Form */}
                     {showAddDepartmentForm && (
                       <div className='bg-white rounded-md border border-gray-200 p-6 mb-6'>
-                        <h3 className='text-base font-semibold text-blue-600 mb-4'>
+                        <h3 className='text-base font-semibold text-gray-900 mb-4'>
                           New Department
                         </h3>
                         <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -1136,7 +1538,7 @@ const AdminDashboard = () => {
                         </div>
                         <button
                           onClick={handleAddDepartment}
-                          className='mt-4 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition text-sm font-medium'
+                          className='mt-4 bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition text-sm font-medium'
                         >
                           Save
                         </button>
@@ -1153,16 +1555,16 @@ const AdminDashboard = () => {
                         <table className='w-full'>
                           <thead className='bg-gray-50 border-b'>
                             <tr>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Name
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Code
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Head
                               </th>
-                              <th className='px-6 py-3 text-left text-sm font-semibold text-blue-600'>
+                              <th className='px-6 py-3 text-left text-sm font-semibold text-gray-900'>
                                 Actions
                               </th>
                             </tr>
@@ -1214,7 +1616,7 @@ const AdminDashboard = () => {
                                     <td className='px-6 py-4 text-sm space-x-2'>
                                       <button
                                         onClick={handleSaveEditDepartment}
-                                        className='text-blue-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-gray-900 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Save
                                       </button>
@@ -1228,7 +1630,7 @@ const AdminDashboard = () => {
                                   </>
                                 ) : (
                                   <>
-                                    <td className='px-6 py-4 text-sm text-blue-600 font-medium'>
+                                    <td className='px-6 py-4 text-sm text-gray-900 font-medium'>
                                       {item.name}
                                     </td>
                                     <td className='px-6 py-4 text-sm text-gray-400'>
@@ -1242,7 +1644,7 @@ const AdminDashboard = () => {
                                         onClick={() =>
                                           handleEditDepartment(item.id)
                                         }
-                                        className='text-blue-600 hover:text-gray-700 text-sm font-medium'
+                                        className='text-gray-900 hover:text-gray-700 text-sm font-medium'
                                       >
                                         Edit
                                       </button>
@@ -1266,10 +1668,480 @@ const AdminDashboard = () => {
                   </div>
                 )}
 
+                {/* Timetable View Tab */}
+                {activeTab === 'timetable-view' && (
+                  <div>
+                    <h2 className='text-xl font-bold text-gray-900 mb-6'>
+                      Timetable View - Clash Detection
+                    </h2>
+
+                    {/* Filters */}
+                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6 p-4 bg-gray-50 rounded-lg'>
+                      <div>
+                        <label className='block text-sm font-medium text-gray-700 mb-1'>
+                          Semester
+                        </label>
+                        <select
+                          value={selectedSemester}
+                          onChange={(e) => setSelectedSemester(e.target.value)}
+                          className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-900'
+                        >
+                          <option value=''>All Semesters</option>
+                          {availableSemesters.map((sem) => (
+                            <option key={sem} value={sem}>
+                              {sem}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className='block text-sm font-medium text-gray-700 mb-1'>
+                          Academic Year
+                        </label>
+                        <select
+                          value={selectedYear}
+                          onChange={(e) => setSelectedYear(e.target.value)}
+                          className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-900'
+                        >
+                          <option value=''>All Years</option>
+                          {availableYears.map((year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className='block text-sm font-medium text-gray-700 mb-1'>
+                          Department
+                        </label>
+                        <select
+                          value={selectedDepartmentView}
+                          onChange={(e) =>
+                            setSelectedDepartmentView(e.target.value)
+                          }
+                          className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-900'
+                        >
+                          <option value=''>All Departments</option>
+                          {departments.map((dept) => (
+                            <option key={dept.id} value={dept.id}>
+                              {dept.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className='block text-sm font-medium text-gray-700 mb-1'>
+                          Level
+                        </label>
+                        <select
+                          value={selectedLevelView}
+                          onChange={(e) => setSelectedLevelView(e.target.value)}
+                          className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-900'
+                        >
+                          <option value=''>All Levels</option>
+                          {levels.map((level) => (
+                            <option key={level.id} value={level.id}>
+                              {level.code} - {level.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className='block text-sm font-medium text-gray-700 mb-1'>
+                          View Mode
+                        </label>
+                        <select
+                          value={viewMode}
+                          onChange={(e) => setViewMode(e.target.value)}
+                          className='w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-gray-900'
+                        >
+                          <option value='level'>By Level</option>
+                          <option value='department'>By Department</option>
+                          <option value='room'>By Room</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    {/* Clash Summary */}
+                    {clashes.length > 0 && (
+                      <div className='mb-6 p-6 bg-red-50 border-2 border-red-300 rounded-lg'>
+                        <h3 className='text-xl font-bold text-red-800 mb-4'>
+                          Clashes Detected: {clashes.length}
+                        </h3>
+                        <div className='space-y-4 max-h-96 overflow-y-auto'>
+                          {clashes.map((clash, idx) => {
+                            const clashKey =
+                              clash.slot1?.id && clash.slot2?.id
+                                ? `clash-${clash.type}-${clash.slot1.id}-${clash.slot2.id}`
+                                : `clash-${clash.type}-${idx}-${Date.now()}`;
+                            return (
+                              <div
+                                key={clashKey}
+                                className='bg-white p-4 rounded-lg border border-red-300 shadow-sm'
+                              >
+                                <div className='font-bold text-red-700 mb-2'>
+                                  Clash #{idx + 1}:{' '}
+                                  {clash.type === 'room'
+                                    ? 'Room Clash'
+                                    : 'Teacher Clash'}
+                                </div>
+                                <div className='grid grid-cols-1 md:grid-cols-2 gap-4 text-sm'>
+                                  <div className='bg-blue-50 p-3 rounded border border-blue-200'>
+                                    <div className='font-semibold text-blue-800 mb-2'>
+                                      Slot 1:
+                                    </div>
+                                    <div className='space-y-1 text-gray-700'>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Course:
+                                        </span>{' '}
+                                        {clash.course1} ({clash.course_code1})
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Department:
+                                        </span>{' '}
+                                        {clash.department1}
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Level:
+                                        </span>{' '}
+                                        {clash.level1}
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Teacher:
+                                        </span>{' '}
+                                        {clash.teacher1}
+                                      </div>
+                                      {clash.type === 'room' && (
+                                        <div>
+                                          <span className='font-medium'>
+                                            Room:
+                                          </span>{' '}
+                                          {clash.room_name}
+                                        </div>
+                                      )}
+                                      {clash.type === 'teacher' && (
+                                        <div>
+                                          <span className='font-medium'>
+                                            Room:
+                                          </span>{' '}
+                                          {clash.room1}
+                                        </div>
+                                      )}
+                                      <div>
+                                        <span className='font-medium'>
+                                          Time:
+                                        </span>{' '}
+                                        {clash.time_slot1}
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Day:
+                                        </span>{' '}
+                                        {clash.day}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className='bg-red-50 p-3 rounded border border-red-200'>
+                                    <div className='font-semibold text-red-800 mb-2'>
+                                      Slot 2:
+                                    </div>
+                                    <div className='space-y-1 text-gray-700'>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Course:
+                                        </span>{' '}
+                                        {clash.course2} ({clash.course_code2})
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Department:
+                                        </span>{' '}
+                                        {clash.department2}
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Level:
+                                        </span>{' '}
+                                        {clash.level2}
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Teacher:
+                                        </span>{' '}
+                                        {clash.teacher2}
+                                      </div>
+                                      {clash.type === 'room' && (
+                                        <div>
+                                          <span className='font-medium'>
+                                            Room:
+                                          </span>{' '}
+                                          {clash.room_name}
+                                        </div>
+                                      )}
+                                      {clash.type === 'teacher' && (
+                                        <div>
+                                          <span className='font-medium'>
+                                            Room:
+                                          </span>{' '}
+                                          {clash.room2}
+                                        </div>
+                                      )}
+                                      <div>
+                                        <span className='font-medium'>
+                                          Time:
+                                        </span>{' '}
+                                        {clash.time_slot2}
+                                      </div>
+                                      <div>
+                                        <span className='font-medium'>
+                                          Day:
+                                        </span>{' '}
+                                        {clash.day}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className='mt-3 pt-3 border-t border-gray-300'>
+                                  <div className='text-sm font-semibold text-red-800'>
+                                    Conflict Details:
+                                  </div>
+                                  <div className='text-sm text-gray-700'>
+                                    {clash.type === 'room'
+                                      ? `Both slots are scheduled in the same room (${clash.room_name}) on ${clash.day} with overlapping times: ${clash.time_slot1} and ${clash.time_slot2}`
+                                      : `Same teacher (${clash.teacher_name}) is scheduled for two different courses on ${clash.day} with overlapping times: ${clash.time_slot1} and ${clash.time_slot2}`}
+                                  </div>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Statistics */}
+                    <div className='grid grid-cols-1 md:grid-cols-4 gap-4 mb-6'>
+                      <div className='bg-blue-50 p-4 rounded-lg border border-blue-200'>
+                        <div className='text-sm text-blue-600 font-medium'>
+                          Total Timetables
+                        </div>
+                        <div className='text-2xl font-bold text-blue-900'>
+                          {filteredTimetables.length}
+                        </div>
+                      </div>
+                      <div className='bg-green-50 p-4 rounded-lg border border-green-200'>
+                        <div className='text-sm text-green-600 font-medium'>
+                          Total Slots
+                        </div>
+                        <div className='text-2xl font-bold text-green-900'>
+                          {allSlots.length}
+                        </div>
+                      </div>
+                      <div className='bg-red-50 p-4 rounded-lg border border-red-200'>
+                        <div className='text-sm text-red-600 font-medium'>
+                          Clashes
+                        </div>
+                        <div className='text-2xl font-bold text-red-900'>
+                          {clashes.length}
+                        </div>
+                      </div>
+                      <div className='bg-purple-50 p-4 rounded-lg border border-purple-200'>
+                        <div className='text-sm text-purple-600 font-medium'>
+                          Groups
+                        </div>
+                        <div className='text-2xl font-bold text-purple-900'>
+                          {groupedSlots.size}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Grouped Timetable View */}
+                    <div className='space-y-8'>
+                      {Array.from(groupedSlots.entries()).map(
+                        ([groupName, slots], groupIdx) => {
+                          const groupKey = `${viewMode}-${groupName}-${groupIdx}`;
+                          return (
+                            <div
+                              key={groupKey}
+                              className='border border-gray-200 rounded-lg p-4 bg-white'
+                            >
+                              <h3 className='text-xl font-bold text-gray-900 mb-4'>
+                                {viewMode === 'level' && 'Level: '}
+                                {viewMode === 'department' && 'Department: '}
+                                {viewMode === 'room' && 'Room: '}
+                                {groupName}
+                              </h3>
+
+                              {/* Timetable Grid */}
+                              <div className='overflow-x-auto'>
+                                <table className='min-w-full border-collapse border border-gray-300'>
+                                  <thead>
+                                    <tr className='bg-gray-900 text-white'>
+                                      <th className='border border-gray-300 px-4 py-2 text-left'>
+                                        Time
+                                      </th>
+                                      {displayDays.map((day, dayIdx) => (
+                                        <th
+                                          key={`day-${day}-${dayIdx}`}
+                                          className='border border-gray-300 px-4 py-2 text-center'
+                                        >
+                                          {DAY_MAP[day]}
+                                        </th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {displayTimes.map((timeSlot, timeIdx) => (
+                                      <tr key={`time-${timeSlot}-${timeIdx}`}>
+                                        <td className='border border-gray-300 px-4 py-2 font-semibold bg-gray-50'>
+                                          {timeSlot}
+                                        </td>
+                                        {displayDays.map((day, dayIdx) => {
+                                          const dayTimeSlots = slots.filter(
+                                            (s) =>
+                                              s.day_of_week === day &&
+                                              formatTimeSlot(
+                                                s.start_time,
+                                                s.end_time,
+                                              ) === timeSlot,
+                                          );
+
+                                          return (
+                                            <td
+                                              key={`cell-${day}-${dayIdx}-${timeSlot}-${timeIdx}`}
+                                              className={`border border-gray-300 px-2 py-1 align-top ${
+                                                dayTimeSlots.some((s) =>
+                                                  hasClash(s),
+                                                )
+                                                  ? 'bg-red-100'
+                                                  : 'bg-white'
+                                              }`}
+                                            >
+                                              {dayTimeSlots.length > 0 ? (
+                                                <div className='space-y-1'>
+                                                  {dayTimeSlots.map(
+                                                    (slot, slotIdx) => {
+                                                      const clash =
+                                                        hasClash(slot);
+                                                      const slotKey = slot.id
+                                                        ? `slot-${slot.id}-${day}-${timeSlot}`
+                                                        : `slot-${slotIdx}-${day}-${timeSlot}-${
+                                                            slot.course_id ||
+                                                            slot.course_code ||
+                                                            'unknown'
+                                                          }`;
+                                                      return (
+                                                        <div
+                                                          key={slotKey}
+                                                          className={`p-2 rounded text-xs ${
+                                                            clash
+                                                              ? 'bg-red-200 border-2 border-red-500'
+                                                              : 'bg-blue-50 border border-blue-200'
+                                                          }`}
+                                                          title={
+                                                            clash
+                                                              ? `CLASH: ${getClashDetails(
+                                                                  slot,
+                                                                )
+                                                                  .map((c) => {
+                                                                    if (
+                                                                      c.type ===
+                                                                      'room'
+                                                                    ) {
+                                                                      return `Room clash in ${c.room_name}`;
+                                                                    }
+                                                                    return `Teacher clash: ${c.teacher_name}`;
+                                                                  })
+                                                                  .join(', ')}`
+                                                              : ''
+                                                          }
+                                                        >
+                                                          <div className='font-semibold text-xs'>
+                                                            {slot.course_name ||
+                                                              slot.course
+                                                                ?.name ||
+                                                              'Unknown'}
+                                                          </div>
+                                                          {(slot.course_code ||
+                                                            slot.course
+                                                              ?.code) && (
+                                                            <div className='text-xs text-gray-600'>
+                                                              {slot.course_code ||
+                                                                slot.course
+                                                                  ?.code}
+                                                            </div>
+                                                          )}
+                                                          <div className='text-xs text-gray-700'>
+                                                            Teacher:{' '}
+                                                            {slot.teacher_name ||
+                                                              'TBA'}
+                                                          </div>
+                                                          <div className='text-xs text-green-700'>
+                                                            Room:{' '}
+                                                            {slot.room_name ||
+                                                              'Unknown'}
+                                                          </div>
+                                                          {clash && (
+                                                            <div className='text-xs font-bold text-red-700 mt-1 border-t border-red-300 pt-1'>
+                                                              CLASH
+                                                            </div>
+                                                          )}
+                                                        </div>
+                                                      );
+                                                    },
+                                                  )}
+                                                </div>
+                                              ) : (
+                                                <div className='text-gray-300 text-center text-xs'>
+                                                  -
+                                                </div>
+                                              )}
+                                            </td>
+                                          );
+                                        })}
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          );
+                        },
+                      )}
+                    </div>
+
+                    {loadingTimetablesWithSlots &&
+                    activeTab === 'timetable-view' ? (
+                      <div className='text-center py-12 text-gray-600'>
+                        Loading timetables...
+                      </div>
+                    ) : groupedSlots.size === 0 &&
+                      timetablesWithSlots.length > 0 ? (
+                      <div className='text-center py-12 text-gray-500'>
+                        No slots found for the selected filters.
+                      </div>
+                    ) : groupedSlots.size === 0 &&
+                      timetablesWithSlots.length === 0 &&
+                      !loadingTimetablesWithSlots ? (
+                      <div className='text-center py-12 text-gray-500'>
+                        No timetables available.
+                      </div>
+                    ) : null}
+                  </div>
+                )}
+
                 {/* Settings Tab */}
                 {activeTab === 'settings' && (
                   <div>
-                    <h2 className='text-xl font-bold text-blue-600 mb-6'>
+                    <h2 className='text-xl font-bold text-gray-900 mb-6'>
                       Settings
                     </h2>
                     <div className='bg-white rounded-md border border-gray-200 p-6'>

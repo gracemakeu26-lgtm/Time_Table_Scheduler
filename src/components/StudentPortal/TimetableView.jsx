@@ -183,49 +183,96 @@ const TimetableView = ({
   };
 
   const handlePrint = () => {
+    // Use browser's native print with CSS media queries
+    // The CSS will hide everything except the timetable
     window.print();
   };
 
-  const handleDownloadPDF = () => {
+  const handleDownloadPDF = async () => {
     if (!tableRef.current) return;
 
-    const element = tableRef.current;
-    const opt = {
-      margin: 10,
-      filename: `timetable_${selectedProgram}_${selectedWeek}.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2 },
-      jsPDF: { orientation: 'landscape', unit: 'mm', format: 'a4' },
-    };
+    try {
+      // Dynamically import html2pdf only when needed
+      const html2pdf = (await import('html2pdf.js')).default;
 
-    html2pdf().set(opt).from(element).save();
+      const element = tableRef.current;
+      const opt = {
+        margin: [10, 10],
+        filename: `timetable_${selectedProgram || 'timetable'}_${
+          selectedWeek || 'current'
+        }.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+        },
+        jsPDF: {
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4',
+        },
+      };
+
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      alert('Failed to generate PDF. Please try again.');
+    }
   };
 
   return (
     <div>
+      {/* Print Styles */}
+      <style>
+        {`
+          @media print {
+            @page {
+              margin: 10mm;
+              size: landscape;
+            }
+            body * {
+              visibility: hidden;
+            }
+            .print-timetable, .print-timetable * {
+              visibility: visible;
+            }
+            .print-timetable {
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100%;
+            }
+            .no-print {
+              display: none !important;
+            }
+          }
+        `}
+      </style>
+
       {/* Filters and Actions */}
-      <div className='flex flex-wrap gap-4 mb-4 justify-between items-center bg-linear-to-r from-blue-50 to-purple-50 p-6 rounded-lg'>
+      <div className='no-print flex flex-wrap gap-4 mb-4 justify-between items-center bg-gray-50 p-6 rounded-lg'>
         <div className='flex flex-wrap gap-4'>
           {selectedProgram && (
             <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
-              Program: <span className='text-blue-600'>{selectedProgram}</span>
+              Program: <span className='text-gray-900'>{selectedProgram}</span>
             </div>
           )}
           <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
             Department:{' '}
-            <span className='text-blue-600'>
+            <span className='text-gray-900'>
               {selectedDepartment?.name || 'N/A'}
             </span>
           </div>
           <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
             Level:{' '}
-            <span className='text-blue-600'>
+            <span className='text-gray-900'>
               {selectedLevel?.name || 'N/A'}
             </span>
           </div>
           {timetable && (
             <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
-              Timetable: <span className='text-blue-600'>{timetable.name}</span>
+              Timetable: <span className='text-gray-900'>{timetable.name}</span>
             </div>
           )}
         </div>
@@ -234,7 +281,7 @@ const TimetableView = ({
         <div className='flex flex-wrap gap-3'>
           <button
             onClick={handlePrint}
-            className='flex items-center gap-2 px-4 py-2 bg-white border-2 border-blue-300 text-blue-600 font-semibold rounded-lg hover:bg-blue-50 transition-colors'
+            className='flex items-center gap-2 px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors'
             title='Print'
           >
             <PrintIcon className='w-4 h-4' />
@@ -242,7 +289,7 @@ const TimetableView = ({
           </button>
           <button
             onClick={handleDownloadPDF}
-            className='flex items-center gap-2 px-4 py-2 bg-white border-2 border-red-300 text-red-600 font-semibold rounded-lg hover:bg-red-50 transition-colors'
+            className='flex items-center gap-2 px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors'
             title='Download as PDF'
           >
             <DownloadIcon className='w-4 h-4' />
@@ -252,9 +299,9 @@ const TimetableView = ({
       </div>
 
       {/* Timetable Grid */}
-      <div className='overflow-x-auto bg-white'>
+      <div className='print-timetable overflow-x-auto bg-white' ref={tableRef}>
         <table className='min-w-full divide-y divide-gray-200 border border-gray-300'>
-          <thead className='bg-blue-500 text-white'>
+          <thead className='bg-gray-900 text-white'>
             <tr>
               <th className='px-3 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider border-r border-gray-300 w-1/12'>
                 Heure
@@ -273,8 +320,8 @@ const TimetableView = ({
           {/* Body */}
           <tbody>
             {displayTimes.map((timeSlot) => (
-              <tr key={timeSlot} className='hover:bg-blue-50 transition-colors'>
-                <td className='bg-linear-to-r from-gray-200 to-gray-100 p-4 text-center font-bold border-2 border-gray-300 text-gray-800 whitespace-nowrap'>
+              <tr key={timeSlot} className='hover:bg-gray-50 transition-colors'>
+                <td className='bg-gray-50 p-4 text-center font-bold border-2 border-gray-300 text-gray-900 whitespace-nowrap'>
                   {timeSlot}
                 </td>
                 {displayDays.map((day) => {
@@ -304,12 +351,21 @@ const TimetableView = ({
                           <div className='font-bold text-sm text-gray-900 mb-1 line-clamp-2'>
                             {course.course}
                           </div>
+                          {course.courseCode && (
+                            <div className='text-xs text-gray-600 mb-1 line-clamp-1'>
+                              {course.courseCode}
+                            </div>
+                          )}
                           <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
-                            <span className='font-semibold'>Teacher:</span>{' '}
+                            <span className='font-semibold text-gray-900'>
+                              Teacher:
+                            </span>{' '}
                             {course.teacher}
                           </div>
                           <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
-                            <span className='font-semibold'>Room:</span>{' '}
+                            <span className='font-semibold text-gray-900'>
+                              Room:
+                            </span>{' '}
                             {course.room}
                           </div>
                         </div>
@@ -325,22 +381,6 @@ const TimetableView = ({
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Legend */}
-      <div className='mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 mb-6'>
-        <div className='flex items-center gap-2 p-3 bg-blue-100 rounded-lg border-l-4 border-blue-600'>
-          <div className='w-4 h-4 bg-blue-600 rounded'></div>
-          <span className='text-sm text-blue-900'>Lecture</span>
-        </div>
-        <div className='flex items-center gap-2 p-3 bg-emerald-100 rounded-lg border-l-4 border-emerald-600'>
-          <div className='w-4 h-4 bg-emerald-600 rounded'></div>
-          <span className='text-sm text-emerald-900'>Lab Work</span>
-        </div>
-        <div className='flex items-center gap-2 p-3 bg-indigo-100 rounded-lg border-l-4 border-indigo-600'>
-          <div className='w-4 h-4 bg-indigo-600 rounded'></div>
-          <span className='text-sm text-indigo-900'>Tutorial</span>
-        </div>
       </div>
 
       {/* Course Detail Modal */}

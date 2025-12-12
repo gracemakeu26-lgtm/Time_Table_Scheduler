@@ -4,9 +4,11 @@ import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
 import { Button } from '../components/common';
 import { APP_INFO } from '../constants';
+import { getFromStorage } from '../utils/storage';
 
 const Home = () => {
   const location = useLocation();
+  const isAdminLoggedIn = getFromStorage('auth_token');
 
   return (
     <div
@@ -21,11 +23,11 @@ const Home = () => {
       <div className='h-screen max-w-5xl w-full mx-auto shadow-xl rounded-lg overflow-hidden flex-1 flex flex-col'>
         <Header currentPath={location.pathname} />
 
-        <main className="py-16 px-6 text-center flex-1 flex flex-col justify-center items-center gap-4">
-          <h1 className="text-5xl font-extrabold text-gray-900 mb-4">
+        <main className='py-16 px-6 text-center flex-1 flex flex-col justify-center items-center gap-4'>
+          <h1 className='text-5xl font-extrabold text-gray-900 mb-4'>
             {APP_INFO?.name || 'Time Table Scheduler'}
           </h1>
-          <h2 className="text-xl text-gray-800 font-semibold mb-10">
+          <h2 className='text-xl text-gray-800 font-semibold mb-10'>
             {APP_INFO?.tagline || 'Consultez facilement les emplois du temps'}
           </h2>
 
@@ -36,18 +38,32 @@ const Home = () => {
               </Button>
             </Link>
 
-            <Link to='/login'>
-              <Button variant='secondary' className='px-4 py-3'>
-                Connexion Admin
-              </Button>
-            </Link>
+            {/* Only show Admin Login button if admin is NOT logged in */}
+            {!isAdminLoggedIn && (
+              <Link to='/login'>
+                <Button variant='secondary' className='px-4 py-3'>
+                  Connexion Admin
+                </Button>
+              </Link>
+            )}
+
+            {/* Show Admin Dashboard button if admin IS logged in */}
+            {isAdminLoggedIn && (
+              <Link to='/admin'>
+                <Button variant='primary' className='px-4 py-3'>
+                  Admin Dashboard
+                </Button>
+              </Link>
+            )}
           </div>
         </main>
 
-        <section className="py-10 px-6 flex justify-center items-center">
-          <div className="bg-gray-900 p-2 max-w-3xl mx-auto text-center">
-            <p className="text-white text-lg my-auto mb leading-relaxed">
-              The University of Yaoundé I timetable system allows students, teachers and parents to easily view class schedules, classrooms and professional information in one place.
+        <section className='py-10 px-6 flex justify-center items-center'>
+          <div className='bg-gray-950 max-w-3xl mx-auto text-center'>
+            <p className='text-gray-50 text-lg my-auto mb leading-relaxed'>
+              The University of Yaoundé I timetable system allows students,
+              teachers and parents to easily view class schedules, classrooms
+              and professional information in one place.
             </p>
           </div>
         </section>

@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS, UNIVERSITY_INFO } from '../../constants';
+import { getFromStorage } from '../../utils/storage';
 
 const Header = () => {
   const location = useLocation();
+  const isAdminLoggedIn = getFromStorage('auth_token');
 
   // Don't render the header on the login page
   if (location.pathname === '/') {
@@ -12,6 +14,11 @@ const Header = () => {
 
   // Filter navigation links based on user role
   const visibleLinks = NAV_LINKS.filter((link) => {
+    // Hide Admin Login if admin is already logged in
+    if (link.to === '/login' && isAdminLoggedIn) {
+      return false;
+    }
+    // Hide links based on current pathname
     if (link.hideOn && link.hideOn.includes(location.pathname)) {
       return false;
     }
@@ -39,21 +46,35 @@ const Header = () => {
         {/* Navigation */}
         <nav
           aria-label='Navigation principale'
-          className='flex text-gray-700 font-medium ml-auto space-x-10 gap-8'
+          className='flex text-gray-700 font-medium ml-auto space-x-10 gap-8 items-center'
         >
           {visibleLinks.map((link) => (
             <Link
               key={link.to}
               to={link.to}
-              className={`hover:text-blue-600 transition-colors ${
+              className={`hover:text-gray-900 transition-colors ${
                 location.pathname === link.to
-                  ? 'text-blue-600 font-semibold'
+                  ? 'text-gray-900 font-semibold'
                   : ''
               }`}
             >
               {link.label}
             </Link>
           ))}
+
+          {/* Admin Navigation - Show when logged in */}
+          {isAdminLoggedIn && (
+            <>
+              {!location.pathname.startsWith('/admin') && (
+                <Link
+                  to='/admin'
+                  className='bg-gray-900 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm font-medium'
+                >
+                  Admin Dashboard
+                </Link>
+              )}
+            </>
+          )}
         </nav>
       </div>
     </header>
