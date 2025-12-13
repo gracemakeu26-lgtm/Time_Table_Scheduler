@@ -1,20 +1,27 @@
 import React from 'react';
 
-const DeleteConfirmationModal = ({
-  isOpen,
-  name,
-  type,
+const DeleteConfirmModal = ({
+  deleteConfirm,
+  setDeleteConfirm,
+  confirmDelete,
   isSubmitting,
-  onClose,
-  onConfirm,
 }) => {
-  if (!isOpen) return null;
+  if (!deleteConfirm.isOpen) {
+    return null;
+  }
 
   return (
     <>
       <div
         className='fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm z-50'
-        onClick={onClose}
+        onClick={() =>
+          setDeleteConfirm({
+            isOpen: false,
+            id: null,
+            name: '',
+            type: 'timetable',
+          })
+        }
       ></div>
       <div className='fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'>
         <div
@@ -27,29 +34,38 @@ const DeleteConfirmationModal = ({
           <div className='p-6'>
             <p className='text-gray-700 mb-4'>
               Are you sure you want to delete{' '}
-              <span className='font-semibold text-gray-900'>"{name}"</span>?
-              This action cannot be undone.
+              <span className='font-semibold text-gray-900'>
+                "{deleteConfirm.name}"
+              </span>
+              ? This action cannot be undone.
             </p>
-            {type === 'timetable' && (
+            {deleteConfirm.type === 'timetable' && (
               <p className='text-sm text-red-600 mb-4'>
                 ⚠️ Warning: All slots associated with this timetable will also
                 be deleted.
               </p>
             )}
-            {type === 'slot' && (
+            {deleteConfirm.type === 'slot' && (
               <p className='text-sm text-gray-600 mb-4'>
                 This slot will be permanently removed from the timetable.
               </p>
             )}
             <div className='flex justify-end gap-3'>
               <button
-                onClick={onClose}
+                onClick={() =>
+                  setDeleteConfirm({
+                    isOpen: false,
+                    id: null,
+                    name: '',
+                    type: 'timetable',
+                  })
+                }
                 className='px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition text-sm font-medium'
               >
                 Cancel
               </button>
               <button
-                onClick={onConfirm}
+                onClick={confirmDelete}
                 disabled={isSubmitting}
                 className='px-6 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2'
               >
@@ -89,4 +105,4 @@ const DeleteConfirmationModal = ({
   );
 };
 
-export default DeleteConfirmationModal;
+export default DeleteConfirmModal;
