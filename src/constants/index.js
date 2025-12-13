@@ -11,7 +11,13 @@ export const NAV_LINKS = [
 ];
 
 // Days of the week
-export const DAYS_OF_WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+export const DAYS_OF_WEEK = [
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+];
 
 // Time slots for timetable
 export const TIME_SLOTS = [
@@ -51,9 +57,9 @@ export const UNIVERSITY_INFO = {
 // Application metadata
 export const APP_INFO = {
   name: 'UniScheduler',
-  tagline: 'Simplified timetable consultation',
+  tagline: 'Consultation des emplois du temps',
   description:
-    'UniScheduler is a platform that allows students, teachers and parents to view timetables',
+    'UniScheduler est une plateforme qui permet aux étudiants, enseignants et parents de consulter les emplois du temps',
   year: new Date().getFullYear(),
 };
 
