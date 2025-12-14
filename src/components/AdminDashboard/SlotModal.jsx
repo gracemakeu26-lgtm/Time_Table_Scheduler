@@ -124,6 +124,7 @@ const SlotModal = ({
                     const levelId = selectedTimetable?.level_id
                       ? Number(selectedTimetable.level_id)
                       : null;
+                    object;
                     // Show ALL courses at this level (not just those with teachers)
                     const filteredCourses = levelId
                       ? courses.filter(
