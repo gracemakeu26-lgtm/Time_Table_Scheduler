@@ -19,6 +19,7 @@ const TimetablesTab = ({
   slots,
   handleOpenSlotModal,
   dayNumberToName,
+  handleDeleteSlot,
 }) => {
   return (
     <div>

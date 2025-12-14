@@ -26,7 +26,7 @@ const SlotModal = ({
   return (
     <>
       <div
-        className='fixed inset-0bg-opacity-20 backdrop-blur-sm z-50'
+        className='fixed inset-0 bg-opacity-80 backdrop-blur-sm z-50'
         onClick={handleCloseSlotModal}
       ></div>
       <div className='fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'>
@@ -53,12 +53,13 @@ const SlotModal = ({
                 </label>
                 <select
                   value={newSlot.day_of_week}
-                  onChange={(e) =>
+                  onChange={(e) => {
+                    console.log(e.target.value, 'slot day from slot modal');
                     setNewSlot({
                       ...newSlot,
                       day_of_week: parseInt(e.target.value),
-                    })
-                  }
+                    });
+                  }}
                   className='w-full px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent'
                 >
                   <option value=''>Select Day</option>

@@ -13,7 +13,7 @@ const DeleteConfirmModal = ({
   return (
     <>
       <div
-        className='fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm z-50'
+        className='fixed inset-0 bg-opacity-80 backdrop-blur-sm z-50'
         onClick={() =>
           setDeleteConfirm({
             isOpen: false,

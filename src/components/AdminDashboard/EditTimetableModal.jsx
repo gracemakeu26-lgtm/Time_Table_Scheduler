@@ -18,7 +18,7 @@ const EditTimetableModal = ({
   return (
     <>
       <div
-        className='fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm z-50'
+        className='fixed inset-0 bg-opacity-80 backdrop-blur-sm z-50'
         onClick={handleCancelEditTimetable}
       ></div>
       <div className='fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'>

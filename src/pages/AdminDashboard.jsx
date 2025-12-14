@@ -515,7 +515,11 @@ const AdminDashboard = () => {
     setSuccess('');
 
     // Validation
-    if (!newSlot.day_of_week) {
+    if (
+      newSlot.day_of_week === '' ||
+      newSlot.day_of_week === null ||
+      newSlot.day_of_week === undefined
+    ) {
       setError('Please select a day of the week');
       return;
     }
@@ -538,26 +542,53 @@ const AdminDashboard = () => {
 
     setIsSubmitting(true);
     try {
-      // Check for conflicts before creating/updating
-      if (newSlot.room_id || newSlot.teacher_id) {
-        try {
-          const dayNumber = dayNameToNumber(newSlot.day_of_week);
-          const conflictData = {
-            day_of_week: dayNumber !== null ? dayNumber : newSlot.day_of_week,
-            start_time: newSlot.start_time,
-            end_time: newSlot.end_time,
-            room_id: newSlot.room_id || null,
-            teacher_id: newSlot.teacher_id || null,
-            exclude_slot_id: editingSlotId || null, // Exclude current slot when editing
-          };
-          const conflictCheck = await slotsAPI.checkConflicts(
-            selectedTimetableId,
-            conflictData,
-          );
+      // Always check for conflicts before creating/updating
+      try {
+        const dayNumber = dayNameToNumber(newSlot.day_of_week);
+        const conflictData = {
+          day_of_week: dayNumber !== null ? dayNumber : newSlot.day_of_week,
+          start_time: newSlot.start_time,
+          end_time: newSlot.end_time,
+          course_id: newSlot.course_id,
+          room_id: newSlot.room_id || null,
+          teacher_id: newSlot.teacher_id || null,
+          exclude_slot_id: editingSlotId || null, // Exclude current slot when editing
+        };
+        const conflictCheck = await slotsAPI.checkConflicts(
+          selectedTimetableId,
+          conflictData,
+        );
 
-          if (conflictCheck && conflictCheck.has_conflicts) {
-            let conflictMessage = '⚠️ Conflict detected: ';
-            const conflicts = [];
+        if (conflictCheck && conflictCheck.has_conflicts) {
+          let conflictMessage = '⚠️ Scheduling conflict detected: ';
+          const conflicts = [];
+
+          if (conflictCheck.conflicts && conflictCheck.conflicts.length > 0) {
+            conflictCheck.conflicts.forEach((conflict) => {
+              if (conflict.type === 'room') {
+                conflicts.push(
+                  `Room "${
+                    conflict.conflicting_slot?.room_name || 'Unknown'
+                  }" is already booked at this time (${
+                    conflict.conflicting_slot?.start_time
+                  } - ${conflict.conflicting_slot?.end_time}) for "${
+                    conflict.conflicting_slot?.course_name || 'Unknown course'
+                  }"`,
+                );
+              } else if (conflict.type === 'teacher') {
+                conflicts.push(
+                  `Teacher is already scheduled at this time (${
+                    conflict.conflicting_slot?.start_time
+                  } - ${conflict.conflicting_slot?.end_time}) for "${
+                    conflict.conflicting_slot?.course_name || 'Unknown course'
+                  }" in "${
+                    conflict.conflicting_slot?.room_name || 'Unknown room'
+                  }"`,
+                );
+              }
+            });
+          } else {
+            // Fallback to old conflict format
             if (
               conflictCheck.room_conflicts &&
               conflictCheck.room_conflicts.length > 0
@@ -578,14 +609,27 @@ const AdminDashboard = () => {
                 } is already scheduled at this time`,
               );
             }
-            setError(conflictMessage + conflicts.join('. '));
+          }
+
+          if (conflicts.length > 0) {
+            setError(
+              conflictMessage +
+                conflicts.join('. ') +
+                '. Please choose a different time slot or room.',
+            );
             setIsSubmitting(false);
             return;
           }
-        } catch (conflictErr) {
-          // If conflict check fails, proceed anyway (backend will catch it)
-          console.warn('Conflict check failed:', conflictErr);
         }
+      } catch (conflictErr) {
+        // If conflict check fails, prevent creation - don't proceed
+        console.error('Conflict check failed:', conflictErr);
+        const errorMessage =
+          conflictErr.response?.data?.error ||
+          'Unable to check for scheduling conflicts. Please try again.';
+        setError(`⚠️ Conflict check failed: ${errorMessage}`);
+        setIsSubmitting(false);
+        return;
       }
 
       if (editingSlotId) {
