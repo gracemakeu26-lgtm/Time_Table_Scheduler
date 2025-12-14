@@ -1345,6 +1345,7 @@ const AdminDashboard = () => {
         setNewSlot={setNewSlot}
         timetables={timetables}
         courses={courses}
+        departments={departments}
         availableRooms={availableRooms}
         rooms={rooms}
         checkingAvailability={checkingAvailability}

@@ -9,6 +9,7 @@ const SlotModal = ({
   setNewSlot,
   timetables,
   courses,
+  departments,
   availableRooms,
   rooms,
   checkingAvailability,
@@ -124,13 +125,33 @@ const SlotModal = ({
                     const levelId = selectedTimetable?.level_id
                       ? Number(selectedTimetable.level_id)
                       : null;
-                    object;
-                    // Show ALL courses at this level (not just those with teachers)
-                    const filteredCourses = levelId
-                      ? courses.filter(
-                          (c) => c.level_id && Number(c.level_id) === levelId,
-                        )
-                      : courses;
+                    const departmentId = selectedTimetable?.department_id
+                      ? Number(selectedTimetable.department_id)
+                      : null;
+                    console.log(
+                      'levelId:',
+                      levelId,
+                      'departmentId:',
+                      departmentId,
+                      'from slots modal',
+                    );
+
+                    // Filter courses by both level and department
+                    const filteredCourses = courses.filter((c) => {
+                      const levelMatch =
+                        !levelId ||
+                        (c.level_id && Number(c.level_id) === levelId);
+                      const departmentMatch =
+                        !departmentId ||
+                        (c.department_id &&
+                          Number(c.department_id) === departmentId);
+                      return levelMatch && departmentMatch;
+                    });
+
+                    console.log(
+                      'filtered courses from slot modal:',
+                      filteredCourses,
+                    );
                     return filteredCourses.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.code} - {c.name}
@@ -145,16 +166,26 @@ const SlotModal = ({
                   const levelId = selectedTimetable?.level_id
                     ? Number(selectedTimetable.level_id)
                     : null;
-                  const filteredCourses = levelId
-                    ? courses.filter(
-                        (c) => c.level_id && Number(c.level_id) === levelId,
-                      )
-                    : courses;
+                  const departmentId = selectedTimetable?.department_id
+                    ? Number(selectedTimetable.department_id)
+                    : null;
+
+                  const filteredCourses = courses.filter((c) => {
+                    const levelMatch =
+                      !levelId ||
+                      (c.level_id && Number(c.level_id) === levelId);
+                    const departmentMatch =
+                      !departmentId ||
+                      (c.department_id &&
+                        Number(c.department_id) === departmentId);
+                    return levelMatch && departmentMatch;
+                  });
+
                   if (filteredCourses.length === 0 && courses.length > 0) {
                     return (
                       <p className='text-xs text-amber-600 mt-1'>
-                        No courses available for this level. Please add courses
-                        for this level first.
+                        No courses available for this level and department.
+                        Please add courses for this level and department first.
                       </p>
                     );
                   }
@@ -265,12 +296,12 @@ const SlotModal = ({
                 >
                   <option value=''>Select Teacher (Optional)</option>
                   {(() => {
-                    // If time is selected, show only available teachers, otherwise show all teachers for the level
+                    // If time is selected, show only available teachers, otherwise show all teachers from the department
                     const selectedTimetable = timetables.find(
                       (t) => String(t.id) === String(selectedTimetableId),
                     );
-                    const levelId = selectedTimetable?.level_id
-                      ? Number(selectedTimetable.level_id)
+                    const departmentId = selectedTimetable?.department_id
+                      ? Number(selectedTimetable.department_id)
                       : null;
 
                     const teachersToShow =
@@ -279,14 +310,12 @@ const SlotModal = ({
                       newSlot.end_time &&
                       availableTeachers.length > 0
                         ? availableTeachers
-                        : levelId
+                        : departmentId
                         ? teachers.filter((teacher) => {
-                            return courses.some(
-                              (c) =>
-                                c.level_id &&
-                                Number(c.level_id) === levelId &&
-                                c.teacher_id &&
-                                Number(c.teacher_id) === Number(teacher.id),
+                            // Show all teachers from the selected department
+                            return (
+                              teacher.department_id &&
+                              Number(teacher.department_id) === departmentId
                             );
                           })
                         : teachers;
@@ -323,8 +352,8 @@ const SlotModal = ({
                   const selectedTimetable = timetables.find(
                     (t) => String(t.id) === String(selectedTimetableId),
                   );
-                  const levelId = selectedTimetable?.level_id
-                    ? Number(selectedTimetable.level_id)
+                  const departmentId = selectedTimetable?.department_id
+                    ? Number(selectedTimetable.department_id)
                     : null;
 
                   if (checkingAvailability) {
@@ -335,14 +364,11 @@ const SlotModal = ({
                     );
                   }
 
-                  const levelTeachers = levelId
+                  const departmentTeachers = departmentId
                     ? teachers.filter((teacher) => {
-                        return courses.some(
-                          (c) =>
-                            c.level_id &&
-                            Number(c.level_id) === levelId &&
-                            c.teacher_id &&
-                            Number(c.teacher_id) === Number(teacher.id),
+                        return (
+                          teacher.department_id &&
+                          Number(teacher.department_id) === departmentId
                         );
                       })
                     : teachers;
@@ -353,14 +379,14 @@ const SlotModal = ({
                     newSlot.end_time &&
                     availableTeachers.length > 0
                       ? availableTeachers
-                      : levelTeachers;
+                      : departmentTeachers;
 
                   if (
                     newSlot.day_of_week &&
                     newSlot.start_time &&
                     newSlot.end_time &&
                     availableTeachers.length === 0 &&
-                    levelTeachers.length > 0
+                    departmentTeachers.length > 0
                   ) {
                     return (
                       <p className='text-xs text-amber-600 mt-1'>
@@ -373,8 +399,8 @@ const SlotModal = ({
                   if (teachersToShow.length === 0 && teachers.length > 0) {
                     return (
                       <p className='text-xs text-amber-600 mt-1'>
-                        No teachers available for this level. Please assign
-                        teachers to courses for this level first.
+                        No teachers available for this department. Please assign
+                        teachers to this department first.
                       </p>
                     );
                   }
