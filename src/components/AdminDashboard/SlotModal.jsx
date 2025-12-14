@@ -56,19 +56,19 @@ const SlotModal = ({
                   onChange={(e) =>
                     setNewSlot({
                       ...newSlot,
-                      day_of_week: e.target.value,
+                      day_of_week: parseInt(e.target.value),
                     })
                   }
                   className='w-full px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent'
                 >
                   <option value=''>Select Day</option>
-                  <option value='Monday'>Monday</option>
-                  <option value='Tuesday'>Tuesday</option>
-                  <option value='Wednesday'>Wednesday</option>
-                  <option value='Thursday'>Thursday</option>
-                  <option value='Friday'>Friday</option>
-                  <option value='Saturday'>Saturday</option>
-                  <option value='Sunday'>Sunday</option>
+                  <option value='0'>Monday</option>
+                  <option value='1'>Tuesday</option>
+                  <option value='2'>Wednesday</option>
+                  <option value='3'>Thursday</option>
+                  <option value='4'>Friday</option>
+                  <option value='5'>Saturday</option>
+                  <option value='6'>Sunday</option>
                 </select>
               </div>
               <div>
@@ -128,30 +128,41 @@ const SlotModal = ({
                     const departmentId = selectedTimetable?.department_id
                       ? Number(selectedTimetable.department_id)
                       : null;
-                    console.log(
-                      'levelId:',
-                      levelId,
-                      'departmentId:',
-                      departmentId,
-                      'from slots modal',
-                    );
 
-                    // Filter courses by both level and department
+                    // Filter courses by both level and department (with robust type checking)
                     const filteredCourses = courses.filter((c) => {
+                      // More robust level matching
                       const levelMatch =
                         !levelId ||
-                        (c.level_id && Number(c.level_id) === levelId);
+                        (c.level_id !== null &&
+                          c.level_id !== undefined &&
+                          String(c.level_id) === String(levelId));
+
+                      // More robust department matching
                       const departmentMatch =
                         !departmentId ||
-                        (c.department_id &&
-                          Number(c.department_id) === departmentId);
+                        (c.department_id !== null &&
+                          c.department_id !== undefined &&
+                          String(c.department_id) === String(departmentId));
+
+                      // Debug each course
+                      if (courses.length < 10) {
+                        // Only log if not too many courses
+                        console.log(
+                          `Course ${c.code}: level_id=${c.level_id}, department_id=${c.department_id}, levelMatch=${levelMatch}, departmentMatch=${departmentMatch}`,
+                        );
+                      }
+
                       return levelMatch && departmentMatch;
                     });
 
                     console.log(
-                      'filtered courses from slot modal:',
+                      'Filtered courses result:',
+                      filteredCourses.length,
                       filteredCourses,
                     );
+                    console.log('=== END DEBUGGING ===');
+
                     return filteredCourses.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.code} - {c.name}

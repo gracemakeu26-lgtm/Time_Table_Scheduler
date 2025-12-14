@@ -55,7 +55,7 @@ const AdminDashboard = () => {
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [slots, setSlots] = useState([]);
   const [newSlot, setNewSlot] = useState({
-    day_of_week: '',
+    day_of_week: 0,
     start_time: '',
     end_time: '',
     course_id: '',
@@ -134,6 +134,14 @@ const AdminDashboard = () => {
           teachersAPI.getAll(),
         ]);
 
+        console.log('Fetched Data from Admin dashboard');
+        console.log('timetable data from Admindashboard:', timetablesData);
+        console.log('courses data from Admindashboard:', coursesData);
+        console.log('levels data from Admindashboard:', levelsData);
+        console.log('rooms data from Admindashboard:', roomsData);
+        console.log('teachers data from Admindashboard:', teachersData);
+        console.log('departments data from Admindashboard:', departmentsData);
+
         // Set timetables without slots
         setTimetables(
           Array.isArray(timetablesData)
@@ -152,12 +160,21 @@ const AdminDashboard = () => {
         setLevels(
           Array.isArray(levelsData) ? levelsData : levelsData.data || [],
         );
+
         setCourses(
-          Array.isArray(coursesData) ? coursesData : coursesData.data || [],
+          Array.isArray(coursesData.courses)
+            ? coursesData.courses
+            : coursesData.courses || [],
         );
-        setRooms(Array.isArray(roomsData) ? roomsData : roomsData.data || []);
+        setRooms(
+          Array.isArray(roomsData.rooms)
+            ? roomsData.rooms
+            : roomsData.rooms || [],
+        );
         setTeachers(
-          Array.isArray(teachersData) ? teachersData : teachersData.data || [],
+          Array.isArray(teachersData.teachers)
+            ? teachersData.teachers
+            : teachersData.teachers || [],
         );
       } catch (err) {
         setError(err.response?.data?.error || 'Failed to load data');
