@@ -145,23 +145,8 @@ const SlotModal = ({
                           c.department_id !== undefined &&
                           String(c.department_id) === String(departmentId));
 
-                      // Debug each course
-                      if (courses.length < 10) {
-                        // Only log if not too many courses
-                        console.log(
-                          `Course ${c.code}: level_id=${c.level_id}, department_id=${c.department_id}, levelMatch=${levelMatch}, departmentMatch=${departmentMatch}`,
-                        );
-                      }
-
                       return levelMatch && departmentMatch;
                     });
-
-                    console.log(
-                      'Filtered courses result:',
-                      filteredCourses.length,
-                      filteredCourses,
-                    );
-                    console.log('=== END DEBUGGING ===');
 
                     return filteredCourses.map((c) => (
                       <option key={c.id} value={c.id}>

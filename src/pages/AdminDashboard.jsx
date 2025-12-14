@@ -134,14 +134,6 @@ const AdminDashboard = () => {
           teachersAPI.getAll(),
         ]);
 
-        console.log('Fetched Data from Admin dashboard');
-        console.log('timetable data from Admindashboard:', timetablesData);
-        console.log('courses data from Admindashboard:', coursesData);
-        console.log('levels data from Admindashboard:', levelsData);
-        console.log('rooms data from Admindashboard:', roomsData);
-        console.log('teachers data from Admindashboard:', teachersData);
-        console.log('departments data from Admindashboard:', departmentsData);
-
         // Set timetables without slots
         setTimetables(
           Array.isArray(timetablesData)
@@ -224,7 +216,7 @@ const AdminDashboard = () => {
     if (success) {
       const timer = setTimeout(() => {
         setSuccess('');
-      }, 5000);
+      }, 3000);
       return () => clearTimeout(timer);
     }
   }, [success]);
