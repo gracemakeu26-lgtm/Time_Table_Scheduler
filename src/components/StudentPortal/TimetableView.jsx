@@ -287,14 +287,6 @@ const TimetableView = ({
             <PrintIcon className='w-4 h-4 text-white' />
             <span className='hidden sm:inline'>Print</span>
           </button>
-          <button
-            onClick={handleDownloadPDF}
-            className='flex items-center gap-2 px-4 py-2 bg-gray-900 text-white font-semibold rounded-lg hover:bg-gray-800 transition-colors'
-            title='Download as PDF'
-          >
-            <DownloadIcon className='w-4 h-4 text-white' />
-            <span className='hidden sm:inline'>PDF</span>
-          </button>
         </div>
       </div>
 
