@@ -26,7 +26,7 @@ const CourseSearch = ({ courses, onFilteredCoursesChange }) => {
         placeholder='Rechercher un cours, enseignant ou salle...'
         value={searchTerm}
         onChange={(e) => handleSearch(e.target.value)}
-        className='w-full px-6 py-3 border-2 border-blue-300 rounded-xl focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all'
+        className='w-full px-6 py-3 border-2 border-gray-300 rounded-xl focus:outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-100 transition-all'
       />
       {searchTerm && (
         <button

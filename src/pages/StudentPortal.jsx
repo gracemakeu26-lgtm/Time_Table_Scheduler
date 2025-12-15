@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, Breadcrumb } from '../components/common';
 import Header from '../components/layout/Header';
 import Footer from '../components/layout/Footer';
@@ -103,6 +103,10 @@ const StudentPortal = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Memoization cache for timetable data
+  // Key format: `${department_id}-${level_id}-${academic_year}-${semester}`
+  const timetableCacheRef = useRef(new Map());
+
   // Auto-dismiss error after 35 seconds
   useEffect(() => {
     if (error) {
@@ -196,6 +200,18 @@ const StudentPortal = () => {
     setError('');
 
     try {
+      // Create cache key based on selection criteria
+      const cacheKey = `${selectedDepartment.id}-${level.id}-${selectedAcademicYear || 'any'}-${selectedSemester || 'any'}`;
+
+      // Check if timetable data is already cached
+      if (timetableCacheRef.current.has(cacheKey)) {
+        const cachedTimetable = timetableCacheRef.current.get(cacheKey);
+        setSelectedTimetable(cachedTimetable);
+        setLoading(false);
+        nextStep();
+        return;
+      }
+
       // Fetch published timetables for department with slots
       const timetablesData = await timetablesAPI.getAll({
         department_id: selectedDepartment.id,
@@ -220,6 +236,9 @@ const StudentPortal = () => {
 
       // For simplicity, take the first timetable
       const fullTimetable = timetablesArray[0];
+
+      // Cache the timetable data for future use
+      timetableCacheRef.current.set(cacheKey, fullTimetable);
 
       setSelectedTimetable(fullTimetable);
       nextStep();
@@ -297,7 +316,7 @@ const StudentPortal = () => {
             {/* Step Title and Description */}
             <div className='text-center mb-8'>
               <h2 className='text-2xl font-bold text-gray-900'>
-                {STUDENT_PORTAL_STEPS[currentStep - 1].name}
+                {STUDENT_PORTAL_STEPS[currentStep - 1]?.name || 'Loading...'}
               </h2>
               <p className='text-gray-600'>{getStepDescription()}</p>
             </div>
@@ -315,7 +334,7 @@ const StudentPortal = () => {
                 onClick={handleBack}
                 className='text-gray-900 hover:text-gray-800 font-medium flex items-center gap-2 mb-4'
               >
-                <BackIcon className='h-5 w-5' />
+                <BackIcon className='h-5 w-5 text-gray-900' />
                 Back
               </button>
             )}

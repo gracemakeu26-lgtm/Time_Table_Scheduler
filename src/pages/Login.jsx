@@ -60,40 +60,30 @@ const Login = () => {
   };
 
   return (
-    <div
-      className='min-h-screen flex flex-col items-center pt-22'
-      style={{
-        backgroundImage: "url('background.jpg')",
-        backgroundRepeat: 'no-repeat',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-    {/* <div className="min-h-screen flex flex-col items-center pt-22"> */}
-      {/* full-bleed header */}
+    <div className='min-h-screen pt-24 flex flex-col bg-linear-to-br from-gray-50 via-gray-100 to-gray-200'>
       <Header />
 
-      {/* centered page card */}
-      <div className='w-full max-w-5xl mx-auto overflow-hidden flex-1 md:h-[80vh] flex flex-col'>
-        <main className='w-full py-6 px-6 md:px-12 lg:px-16 flex gap-6 md:gap-10 mx-4 md:mx-10 my-6 md:my-10 justify-center flex-1 overflow-auto items-center text-center'>
-          <div className='border border-transparent hover:border-gray-500 bg-white/10 backdrop-blur-3xl shadow-2xl rounded-lg max-w-md w-full p-6 md:p-10 flex flex-col justify-center items-center gap-6 md:gap-8'>
-            <div className='text-center mt-6 pt-2.5'>
-              <h2 className='text-2xl md:text-3xl font-extrabold text-gray-700'>
-                Accès administration
-              </h2>
-              <p className='text-sm text-gray-700 mt-2'>
+      {/* Main Content */}
+      <main className='flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8 '>
+        <div className='w-full max-w-md'>
+          {/* Login Card */}
+          <div className='bg-white rounded-2xl shadow-xl border border-gray-200 p-8 md:p-10'>
+            {/* Header */}
+            <div className='text-center mb-8'>
+              <h1 className='text-3xl md:text-4xl font-extrabold text-gray-900 mb-2'>
+                Accès Administration
+              </h1>
+              <p className='text-gray-600 text-base'>
                 Connectez-vous pour gérer les emplois du temps
               </p>
             </div>
 
-            <form
-              onSubmit={handleSubmit}
-              className='items-center flex flex-col gap-4 w-full'
-            >
-              <div className='w-full'>
+            {/* Login Form */}
+            <form onSubmit={handleSubmit} className='space-y-6'>
+              <div>
                 <Input
-                  label=''
-                  placeholder='Identifiant'
+                  label='Identifiant'
+                  placeholder='Entrez votre identifiant'
                   type='text'
                   name='identifiant'
                   value={values.identifiant}
@@ -101,19 +91,13 @@ const Login = () => {
                   onBlur={handleBlur}
                   error={errors.identifiant}
                   required
-                  className='mb-0'
                 />
-                {errors.identifiant && (
-                  <p className='text-red-600 text-xs mt-1'>
-                    {errors.identifiant}
-                  </p>
-                )}
               </div>
 
-              <div className='w-full'>
+              <div>
                 <Input
-                  label=''
-                  placeholder='Mot de passe'
+                  label='Mot de passe'
+                  placeholder='Entrez votre mot de passe'
                   type='password'
                   name='motdepasse'
                   value={values.motdepasse}
@@ -121,46 +105,75 @@ const Login = () => {
                   onBlur={handleBlur}
                   error={errors.motdepasse}
                   required
-                  className='mb-0'
                 />
-                {errors.motdepasse && (
-                  <p className='text-red-600 text-xs mt-1'>
-                    {errors.motdepasse}
-                  </p>
-                )}
               </div>
 
               {loginError && (
-                <div className='w-full p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm'>
-                  {loginError}
+                <div className='p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm'>
+                  <div className='flex items-start'>
+                    <span className='text-red-500 mr-2'>⚠️</span>
+                    <span>{loginError}</span>
+                  </div>
                 </div>
               )}
 
-              <div className='flex flex-col items-center space-y-3 mt-2 w-full'>
-                <Button
-                  type='submit'
-                  variant='primary'
-                  disabled={isSubmitting}
-                  className='w-full py-2'
-                >
-                  {isSubmitting ? 'Connexion...' : 'Se connecter'}
-                </Button>
-
-                <Link
-                  to='/'
-                  className='text-sm text-gray-300 hover:text-blue-600 transition-colors flex items-center'
-                >
-                  <BackIcon className='h-4 w-4 mr-1' />
-                  Retour à l'accueil
-                </Link>
-              </div>
+              <Button
+                type='submit'
+                variant='primary'
+                disabled={isSubmitting}
+                className='w-full py-3 text-base font-semibold shadow-lg hover:shadow-xl transition-all duration-300'
+              >
+                {isSubmitting ? (
+                  <span className='flex items-center justify-center'>
+                    <svg
+                      className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+                      xmlns='http://www.w3.org/2000/svg'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                    >
+                      <circle
+                        className='opacity-25'
+                        cx='12'
+                        cy='12'
+                        r='10'
+                        stroke='currentColor'
+                        strokeWidth='4'
+                      ></circle>
+                      <path
+                        className='opacity-75'
+                        fill='currentColor'
+                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                      ></path>
+                    </svg>
+                    Connexion en cours...
+                  </span>
+                ) : (
+                  'Se connecter'
+                )}
+              </Button>
             </form>
-          </div>
-        </main>
-      </div>
 
-      {/* </div>  */}
-      {/* full-bleed footer */}
+            {/* Back to Home Link */}
+            <div className='mt-6 text-center'>
+              <Link
+                to='/'
+                className='inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors font-medium'
+              >
+                <BackIcon className='h-4 w-4 mr-2' />
+                Retour à l'accueil
+              </Link>
+            </div>
+          </div>
+
+          {/* Additional Info */}
+          <div className='mt-6 text-center'>
+            <p className='text-sm text-gray-500'>
+              Accès réservé aux administrateurs autorisés
+            </p>
+          </div>
+        </div>
+      </main>
+
       <Footer />
     </div>
   );
