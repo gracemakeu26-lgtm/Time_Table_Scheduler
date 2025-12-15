@@ -294,7 +294,7 @@ const TimetableViewTab = ({
                 key={groupKey}
                 className='border border-gray-200 rounded-lg p-3 md:p-4 bg-white'
               >
-                <h3 className='text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4 break-words'>
+                <h3 className='text-lg md:text-xl font-bold text-gray-900 mb-3 md:mb-4 wrap-break-words'>
                   {viewMode === 'level' && 'Level: '}
                   {viewMode === 'department' && 'Department: '}
                   {viewMode === 'room' && 'Room: '}
