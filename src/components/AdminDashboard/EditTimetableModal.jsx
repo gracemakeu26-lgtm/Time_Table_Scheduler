@@ -16,12 +16,15 @@ const EditTimetableModal = ({
   }
 
   return (
-    <>
+    <div
+      className='fixed inset-0 z-50'
+      key={`edit-timetable-modal-${editingTimetableId}`}
+    >
       <div
-        className='fixed inset-0 bg-opacity-80 backdrop-blur-sm z-50'
+        className='fixed inset-0 bg-opacity-50 backdrop-blur-sm'
         onClick={handleCancelEditTimetable}
-      ></div>
-      <div className='fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none'>
+      />
+      <div className='fixed inset-0 flex items-center justify-center p-4 pointer-events-none'>
         <div
           className='bg-white rounded-lg shadow-2xl max-w-2xl w-full border border-gray-200 transform transition-all pointer-events-auto'
           onClick={(e) => e.stopPropagation()}
@@ -214,7 +217,7 @@ const EditTimetableModal = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

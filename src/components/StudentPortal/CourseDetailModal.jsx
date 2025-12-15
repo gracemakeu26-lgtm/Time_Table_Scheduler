@@ -4,16 +4,19 @@ const CourseDetailModal = ({ course, isOpen, onClose }) => {
   if (!isOpen || !course) return null;
 
   return (
-    <>
+    <div
+      className='fixed inset-0 z-50'
+      key={`course-detail-modal-${course.id || course.courseCode || 'unknown'}`}
+    >
       {/* Backdrop - Semi-transparent white overlay */}
       <div
-        className='fixed inset-0 bg-opacity-80 backdrop-blur-sm z-40 transition-opacity'
+        className='fixed inset-0  bg-opacity-50 backdrop-blur-sm transition-opacity'
         onClick={onClose}
-      ></div>
+      />
 
       {/* Modal */}
-      <div className='fixed inset-0 z-50 flex items-center justify-center p-4'>
-        <div className='bg-white rounded-lg shadow-2xl max-w-md w-full border border-gray-200 transform transition-all'>
+      <div className='fixed inset-0 flex items-center justify-center p-4 pointer-events-none'>
+        <div className='bg-white rounded-lg shadow-2xl max-w-md w-full border border-gray-200 transform transition-all pointer-events-auto'>
           {/* Header */}
           <div className='bg-gray-900 text-white px-6 py-4 rounded-t-lg'>
             <h2 className='text-xl font-bold text-white mb-1'>
@@ -102,7 +105,7 @@ const CourseDetailModal = ({ course, isOpen, onClose }) => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
