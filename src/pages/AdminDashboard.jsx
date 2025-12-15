@@ -752,12 +752,25 @@ const AdminDashboard = () => {
   };
 
   const handleEditTimetable = (id) => {
-    const timetable = timetables.find((t) => t.id === id);
-    setEditingTimetableId(id);
-    setEditTimetableData({ ...timetable });
-    setShowEditModal(true);
+    // First clear any existing state
     setError('');
     setSuccess('');
+    setEditingTimetableId(null);
+    setEditTimetableData({});
+    setShowEditModal(false);
+
+    // Small delay to ensure state is cleared
+    setTimeout(() => {
+      const timetable = timetables.find((t) => t.id === id);
+      if (!timetable) {
+        setError('Timetable not found');
+        return;
+      }
+
+      setEditingTimetableId(id);
+      setEditTimetableData({ ...timetable });
+      setShowEditModal(true);
+    }, 50);
   };
 
   const handleSaveEditTimetable = async () => {
