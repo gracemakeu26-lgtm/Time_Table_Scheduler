@@ -9,10 +9,7 @@ const CourseDetailModal = ({ course, isOpen, onClose }) => {
       key={`course-detail-modal-${course.id || course.courseCode || 'unknown'}`}
     >
       {/* Backdrop - Semi-transparent white overlay */}
-      <div
-        className='fixed inset-0  bg-opacity-50 backdrop-blur-sm transition-opacity'
-        onClick={onClose}
-      />
+      <div className='fixed inset-0 ' onClick={onClose} />
 
       {/* Modal */}
       <div className='fixed inset-0 flex items-center justify-center p-4 pointer-events-none'>
