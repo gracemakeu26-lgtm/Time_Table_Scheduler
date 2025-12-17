@@ -294,7 +294,7 @@ const StudentPortal = () => {
               {[1, 2, 3, 4].map((step) => (
                 <div key={step} className='flex-1 flex items-center'>
                   <div
-                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm flex-shrink-0 ${
+                    className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shrink-0 ${
                       step <= currentStep
                         ? 'bg-gray-900 text-white'
                         : 'bg-gray-300 text-gray-600'
@@ -318,7 +318,9 @@ const StudentPortal = () => {
               <h2 className='text-xl sm:text-2xl font-bold text-gray-900'>
                 {STUDENT_PORTAL_STEPS[currentStep - 1]?.name || 'Loading...'}
               </h2>
-              <p className='text-sm sm:text-base text-gray-600 mt-2'>{getStepDescription()}</p>
+              <p className='text-sm sm:text-base text-gray-600 mt-2'>
+                {getStepDescription()}
+              </p>
             </div>
 
             {/* Error Message */}
