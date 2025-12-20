@@ -302,10 +302,10 @@ const TimetableViewTab = ({
                 </h3>
 
                 {/* Timetable Grid */}
-                <div className='overflow-x-auto -mx-3 md:mx-0'>
+                <div className='overflow-x-auto -mx-3 md:mx-0 min-w-full w-full'>
                   <table
                     className='w-full border-collapse border border-gray-300'
-                    style={{ minWidth: '640px' }}
+                    style={{ minWidth: '100%' }}
                   >
                     <thead>
                       <tr className='bg-gray-900 text-white'>

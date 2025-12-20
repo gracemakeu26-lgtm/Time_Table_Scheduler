@@ -252,6 +252,7 @@ Before installing the application, ensure you have the following installed on yo
 - **Node.js**: Version 16.0.0 or higher
 - **npm**: Version 8.0.0 or higher (comes with Node.js)
 - **Git**: For version control and repository cloning
+- **Backend API**: The timetable manager backend should be running (see backend README)
 
 ### Step-by-Step Installation
 
@@ -268,8 +269,19 @@ Before installing the application, ensure you have the following installed on yo
    npm install
    ```
 
+   Or using alternative package managers:
+
+   ```bash
+   # Using yarn
+   yarn install
+
+   # Using pnpm
+   pnpm install
+   ```
+
 3. **Environment Configuration**
-   Create a `.env` file in the project root:
+
+   Create a `.env` file in the project root (optional - defaults work for development):
 
    ```env
    VITE_API_BASE_URL=http://localhost:5000/api
@@ -277,14 +289,21 @@ Before installing the application, ensure you have the following installed on yo
    VITE_APP_VERSION=1.0.0
    ```
 
+   **Note**: If using Docker for the backend, ensure the backend is accessible at `http://localhost:5000`
+
 4. **Start Development Server**
 
    ```bash
    npm run dev
    ```
 
+   The server will start on `http://localhost:5173` (Vite default port)
+
 5. **Verify Installation**
-   Open your browser and navigate to `http://localhost:3000` (or the port specified by Vite)
+
+   - Open your browser and navigate to `http://localhost:5173`
+   - You should see the home page
+   - Ensure the backend API is running and accessible
 
 ### Alternative Installation Methods
 
@@ -298,23 +317,46 @@ yarn dev
 **Using Docker** (if Dockerfile is available)
 
 ```bash
+# Build Docker image
 docker build -t timetable-frontend .
-docker run -p 3000:3000 timetable-frontend
+
+# Run container
+docker run -p 3000:3000 \
+  -e VITE_API_BASE_URL=http://localhost:5000/api \
+  timetable-frontend
 ```
+
+**Note**: For production builds, use `npm run build` and serve the `dist` folder with a web server like Nginx.
 
 ## Configuration
 
 ### Environment Variables
 
-The application uses environment variables for configuration management:
+The application uses environment variables for configuration management. Create a `.env` file in the project root (optional - defaults work for development):
 
 **VITE_API_BASE_URL**: Backend API base URL
 
 - Development: `http://localhost:5000/api`
 - Production: Set to your deployed backend URL
+- Default: `http://localhost:5000/api` (if not set)
 
 **VITE_APP_TITLE**: Application title displayed in browser tab
+
+- Default: "Timetable Scheduler"
+
 **VITE_APP_VERSION**: Application version for display and debugging
+
+- Default: "1.0.0"
+
+**Example `.env` file:**
+
+```env
+VITE_API_BASE_URL=http://localhost:5000/api
+VITE_APP_TITLE=Timetable Scheduler
+VITE_APP_VERSION=1.0.0
+```
+
+**Note**: Environment variables must be prefixed with `VITE_` to be accessible in the frontend code.
 
 ### Vite Configuration
 
@@ -1163,5 +1205,69 @@ When reporting bugs or requesting features:
 - React Developer Tools browser extension
 - Git GUI client or command line proficiency
 - Postman or similar for API testing
+
+---
+
+## Quick Start Guide
+
+### Prerequisites
+
+- Node.js 16+ and npm 8+
+- Backend API running (see backend README for setup)
+
+### Quick Start Commands
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. (Optional) Configure environment
+# Create .env file if you need custom API URL
+echo "VITE_API_BASE_URL=http://localhost:5000/api" > .env
+
+# 3. Start development server
+npm run dev
+
+# 4. Open browser
+# Navigate to http://localhost:5173
+```
+
+### Backend Connection
+
+Ensure the backend API is running before starting the frontend:
+
+**Using Docker (Recommended):**
+
+```bash
+cd ../timetable_manager_backend
+docker compose up
+```
+
+**Or Locally:**
+
+```bash
+cd ../timetable_manager_backend
+source venv/bin/activate
+flask run
+```
+
+The frontend will connect to `http://localhost:5000/api` by default.
+
+### Common Commands
+
+```bash
+# Development
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run preview      # Preview production build
+
+# Code Quality
+npm run lint         # Run linter (if configured)
+```
+
+---
+
+**Last Updated**: December 17, 2025
+**Version**: 1.0.0
 
 This comprehensive README provides a complete overview of the Timetable Scheduler Frontend application, covering all aspects from installation and configuration to development and deployment. The documentation serves as both a user guide and developer reference, enabling anyone to understand, use, and contribute to the project effectively.
