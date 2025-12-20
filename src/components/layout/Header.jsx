@@ -29,15 +29,22 @@ const Header = () => {
   return (
     <header className='fixed top-0 z-50 bg-gray-200 w-full py-4 px-4 sm:px-6 lg:px-12 rounded-t-lg mb-auto'>
       <div className='max-w-5xl w-full flex justify-between items-center mx-auto h-14'>
-        {/* Logo and UNIVERSITY NAME */}
-        <div className='flex items-center space-x-1 grow gap-1'>
-          <img src='/logo.png' alt='UniScheduler Logo' className='w-10 ' />
+        {/* Logo and UNIVERSITY NAME, now clickable to the home page */}
+        <Link
+          to='/'
+          className='flex items-center space-x-1 grow gap-1 group focus:outline-none'
+        >
+          <img
+            src='/logo.png'
+            alt='UniScheduler Logo'
+            className='w-10 transition-transform group-hover:scale-105'
+          />
           <div className='flex flex-col'>
-            <span className='text-gray-700 font-semibold text-xs sm:text-sm truncate max-w-32 sm:max-w-none'>
+            <span className='text-gray-700 font-semibold text-xs sm:text-sm truncate max-w-32 sm:max-w-none group-hover:text-gray-900'>
               {UNIVERSITY_INFO.name}
             </span>
           </div>
-        </div>
+        </Link>
 
         {/* Mobile menu button */}
         <button
