@@ -251,227 +251,134 @@ const TimetableView = ({
       </style>
 
       {/* Filters and Actions */}
-      <div className='no-print flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 sm:mb-6 justify-between items-stretch sm:items-center bg-gray-50 p-3 sm:p-4 md:p-6 rounded-lg'>
-        <div className='flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 md:gap-4 flex-1'>
+      <div className='no-print flex flex-wrap gap-4 mb-6 justify-between items-center bg-gray-50 p-6 rounded-lg'>
+        <div className='flex flex-wrap gap-4'>
           {selectedProgram && (
-            <div className='text-xs sm:text-sm text-gray-600 font-semibold bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-200'>
+            <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
               Program: <span className='text-gray-900'>{selectedProgram}</span>
             </div>
           )}
-          <div className='text-xs sm:text-sm text-gray-600 font-semibold bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-200'>
+          <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
             Department:{' '}
             <span className='text-gray-900'>
               {selectedDepartment?.name || 'N/A'}
             </span>
           </div>
-          <div className='text-xs sm:text-sm text-gray-600 font-semibold bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-200'>
+          <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
             Level:{' '}
             <span className='text-gray-900'>
               {selectedLevel?.name || 'N/A'}
             </span>
           </div>
           {timetable && (
-            <div className='text-xs sm:text-sm text-gray-600 font-semibold bg-white px-3 sm:px-4 py-2 rounded-lg border border-gray-200'>
+            <div className='text-sm text-gray-600 font-semibold bg-white px-4 py-2 rounded-lg border border-gray-200'>
               Timetable: <span className='text-gray-900'>{timetable.name}</span>
             </div>
           )}
         </div>
 
         {/* Action Buttons */}
-        <div className='flex flex-wrap gap-2 sm:gap-3'>
+        <div className='flex gap-3'>
           <button
             onClick={handlePrint}
-            className='flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gray-900 text-white text-xs sm:text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors w-full sm:w-auto'
+            className='flex items-center gap-2 px-4 py-2 bg-gray-900 text-white text-sm font-semibold rounded-lg hover:bg-gray-800 transition-colors'
             title='Print'
           >
-            <PrintIcon className='w-4 h-4 text-white' />
-            <span className='hidden sm:inline'>Print</span>
+            <PrintIcon className='w-5 h-5 text-white' />
+            <span>Print</span>
           </button>
         </div>
       </div>
 
-      {/* Desktop/Tablet Table View */}
-      <div className='print-timetable hidden md:block overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm' ref={tableRef}>
-        <div className='overflow-x-auto'>
-          <table className='w-full divide-y divide-gray-200 border border-gray-300'>
-            <thead className='bg-gray-900 text-white'>
-              <tr>
-                <th className='px-2 md:px-3 lg:px-4 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-white uppercase tracking-wider border-r border-gray-300 whitespace-nowrap min-w-[80px]'>
-                  Heure
+      {/* Timetable Grid */}
+      <div
+        className='print-timetable overflow-x-auto bg-white rounded-lg border border-gray-200 shadow-sm'
+        ref={tableRef}
+      >
+        <table
+          className='w-full divide-y divide-gray-200 border border-gray-300'
+          style={{ minWidth: '800px' }}
+        >
+          <thead className='bg-gray-900 text-white'>
+            <tr>
+              <th className='px-4 py-3 text-left text-sm font-semibold text-white uppercase tracking-wider border-r border-gray-300 w-32'>
+                Heure
+              </th>
+              {displayDays.map((day) => (
+                <th
+                  key={day}
+                  className='px-4 py-3 text-center text-sm font-semibold text-white uppercase tracking-wider border-r border-gray-300'
+                >
+                  <div className='font-extrabold text-sm'>{day}</div>
                 </th>
-                {displayDays.map((day) => (
-                  <th
-                    key={day}
-                    className='px-2 md:px-3 lg:px-4 py-2 md:py-3 text-center text-xs md:text-sm font-semibold text-white uppercase tracking-wider border-r border-gray-300'
-                  >
-                    <div className='font-extrabold text-xs md:text-sm'>{day}</div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-
-            {/* Body */}
-            <tbody>
-              {displayTimes.map((timeSlot) => (
-                <tr key={timeSlot} className='hover:bg-gray-50 transition-colors'>
-                  <td className='bg-gray-50 px-2 md:px-3 lg:px-4 py-2 md:py-3 text-center font-bold border-2 border-gray-300 text-gray-900 whitespace-nowrap text-xs md:text-sm'>
-                    {timeSlot}
-                  </td>
-                  {displayDays.map((day) => {
-                    const course = getCourseForSlot(day, timeSlot);
-                    const courseId = `${day}-${timeSlot}`;
-                    const isFiltered =
-                      !searchTerm || filteredCourseIds.has(courseId);
-                    return (
-                      <td
-                        key={courseId}
-                        className={`border-2 border-gray-300 px-1 md:px-2 py-1 md:py-2 min-h-[100px] md:min-h-[120px] align-top transition-colors ${
-                          isFiltered
-                            ? 'bg-gray-50 hover:bg-gray-100'
-                            : 'bg-gray-300 opacity-30'
-                        }`}
-                      >
-                        {course && isFiltered ? (
-                          <div
-                            onClick={() => {
-                              setSelectedCourse(course);
-                              setIsModalOpen(true);
-                            }}
-                            className={`p-2 md:p-3 rounded-lg h-full cursor-pointer transform transition-all hover:scale-105 hover:shadow-lg ${getCourseStyle(
-                              course.type,
-                            )}`}
-                          >
-                            <div className='font-bold text-xs md:text-sm text-gray-900 mb-1 line-clamp-2'>
-                              {course.course}
-                            </div>
-                            {course.courseCode && (
-                              <div className='text-[10px] md:text-xs text-gray-600 mb-1 line-clamp-1'>
-                                {course.courseCode}
-                              </div>
-                            )}
-                            <div className='text-[10px] md:text-xs text-gray-700 mb-1 line-clamp-1'>
-                              <span className='font-semibold text-gray-900'>
-                                Teacher:
-                              </span>{' '}
-                              {course.teacher}
-                            </div>
-                            <div className='text-[10px] md:text-xs text-gray-700 mb-1 line-clamp-1'>
-                              <span className='font-semibold text-gray-900'>
-                                Room:
-                              </span>{' '}
-                              {course.room}
-                            </div>
-                          </div>
-                        ) : !course && isFiltered ? (
-                          <div className='text-gray-400 italic text-center text-xs h-full flex items-center justify-center'>
-                            -
-                          </div>
-                        ) : null}
-                      </td>
-                    );
-                  })}
-                </tr>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            </tr>
+          </thead>
 
-      {/* Mobile Card View */}
-      <div className='print-timetable md:hidden space-y-4'>
-        {displayDays.map((day) => {
-          const dayCourses = allCourses.filter((course) => course.day === day);
-          const filteredDayCourses = dayCourses.filter((course) => {
-            const courseId = `${course.day}-${course.time}`;
-            return !searchTerm || filteredCourseIds.has(courseId);
-          });
-
-          if (filteredDayCourses.length === 0 && searchTerm) {
-            return null;
-          }
-
-          return (
-            <div
-              key={day}
-              className='bg-white rounded-lg border border-gray-200 shadow-sm overflow-hidden'
-            >
-              <div className='bg-gray-900 text-white px-4 py-3'>
-                <h3 className='text-base font-bold text-center'>{day}</h3>
-              </div>
-              <div className='divide-y divide-gray-200'>
-                {displayTimes.map((timeSlot) => {
+          {/* Body */}
+          <tbody>
+            {displayTimes.map((timeSlot) => (
+              <tr key={timeSlot} className='hover:bg-gray-50 transition-colors'>
+                <td className='bg-gray-50 p-4 text-center font-bold border-2 border-gray-300 text-gray-900 whitespace-nowrap text-sm'>
+                  {timeSlot}
+                </td>
+                {displayDays.map((day) => {
                   const course = getCourseForSlot(day, timeSlot);
                   const courseId = `${day}-${timeSlot}`;
                   const isFiltered =
                     !searchTerm || filteredCourseIds.has(courseId);
-
-                  if (!isFiltered) return null;
-
                   return (
-                    <div
+                    <td
                       key={courseId}
-                      className={`px-4 py-3 ${
-                        course
-                          ? 'hover:bg-gray-50 transition-colors cursor-pointer'
-                          : 'bg-gray-50'
+                      className={`border-2 border-gray-300 p-2 min-h-[120px] align-top transition-colors ${
+                        isFiltered
+                          ? 'bg-gray-50 hover:bg-gray-100'
+                          : 'bg-gray-300 opacity-30'
                       }`}
-                      onClick={() => {
-                        if (course) {
-                          setSelectedCourse(course);
-                          setIsModalOpen(true);
-                        }
-                      }}
                     >
-                      <div className='flex items-start justify-between gap-3'>
-                        <div className='flex-1 min-w-0'>
-                          <div className='flex items-center gap-2 mb-2'>
-                            <span className='text-sm font-bold text-gray-900 whitespace-nowrap'>
-                              {timeSlot}
-                            </span>
+                      {course && isFiltered ? (
+                        <div
+                          onClick={() => {
+                            setSelectedCourse(course);
+                            setIsModalOpen(true);
+                          }}
+                          className={`p-3 rounded-lg h-full cursor-pointer transform transition-all hover:scale-105 hover:shadow-lg ${getCourseStyle(
+                            course.type,
+                          )}`}
+                        >
+                          <div className='font-bold text-sm text-gray-900 mb-1 line-clamp-2'>
+                            {course.course}
                           </div>
-                          {course ? (
-                            <div
-                              className={`p-3 rounded-lg ${getCourseStyle(
-                                course.type,
-                              )}`}
-                            >
-                              <div className='font-bold text-sm text-gray-900 mb-1'>
-                                {course.course}
-                              </div>
-                              {course.courseCode && (
-                                <div className='text-xs text-gray-600 mb-2'>
-                                  {course.courseCode}
-                                </div>
-                              )}
-                              <div className='space-y-1'>
-                                <div className='text-xs text-gray-700'>
-                                  <span className='font-semibold text-gray-900'>
-                                    Teacher:
-                                  </span>{' '}
-                                  {course.teacher}
-                                </div>
-                                <div className='text-xs text-gray-700'>
-                                  <span className='font-semibold text-gray-900'>
-                                    Room:
-                                  </span>{' '}
-                                  {course.room}
-                                </div>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className='text-gray-400 italic text-sm text-center py-2'>
-                              No class scheduled
+                          {course.courseCode && (
+                            <div className='text-xs text-gray-600 mb-1 line-clamp-1'>
+                              {course.courseCode}
                             </div>
                           )}
+                          <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
+                            <span className='font-semibold text-gray-900'>
+                              Teacher:
+                            </span>{' '}
+                            {course.teacher}
+                          </div>
+                          <div className='text-xs text-gray-700 mb-1 line-clamp-1'>
+                            <span className='font-semibold text-gray-900'>
+                              Room:
+                            </span>{' '}
+                            {course.room}
+                          </div>
                         </div>
-                      </div>
-                    </div>
+                      ) : !course && isFiltered ? (
+                        <div className='text-gray-400 italic text-center text-sm h-full flex items-center justify-center'>
+                          -
+                        </div>
+                      ) : null}
+                    </td>
                   );
                 })}
-              </div>
-            </div>
-          );
-        })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       {/* Course Detail Modal */}
