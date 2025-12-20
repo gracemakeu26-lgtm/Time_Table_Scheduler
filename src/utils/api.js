@@ -7,7 +7,8 @@ import { saveToStorage, getFromStorage, removeFromStorage } from './storage';
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 if (!API_BASE_URL) {
-  throw new Error('VITE_API_BASE_URL is not defined in environment variables');
+  console.error('VITE_API_BASE_URL is not set');
+  API_BASE_URL = '/api';
 }
 
 // Create axios instance

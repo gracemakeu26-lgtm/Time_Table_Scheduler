@@ -29,7 +29,7 @@ const TimetableViewTab = ({
   loadingTimetablesWithSlots,
 }) => {
   return (
-    <div>
+    <div className='min-w-full w-full'>
       <h2 className='text-lg md:text-xl font-bold text-gray-900 mb-4 md:mb-6'>
         Timetable View - Clash Detection
       </h2>
